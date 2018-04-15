@@ -73,7 +73,7 @@ class OAuth2
         $request->getPost('code', $code);
         $request->getPost('redirect_uri', $this->redirectUrl);
         $request->getHeader('Content-Type', 'application/x-www-form-urlencoded');
-        $request->getHeader('Content-Length', strlen($request->getPost()->toString()));
+        $request->getHeader('Content-length', strlen($request->getPost()->toString()));
 
         $response = $client->send($request);
         $json = $response->getBody();
