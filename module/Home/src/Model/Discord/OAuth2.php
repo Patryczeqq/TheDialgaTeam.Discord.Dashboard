@@ -67,10 +67,7 @@ class OAuth2
         $request = new Request();
         $request->setUri($this->tokenUrl);
         $request->setMethod(Request::METHOD_POST);
-        $request->getHeaders()->addHeaders([
-           'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
-
+        $request->getHeaders('Content-Type', 'application/x-www-form-urlencoded');
         $request->getPost('client_id', $this->clientId);
         $request->getPost('client_secret', $this->clientSecret);
         $request->getPost('grant_type', 'authorization_code');
