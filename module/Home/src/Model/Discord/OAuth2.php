@@ -71,7 +71,7 @@ class OAuth2
         $request->getPost('client_secret', $this->clientSecret);
         $request->getPost('grant_type', 'authorization_code');
         $request->getPost('code', $code);
-        $request->getPost('redirect_uri', $this->redirectUrl);
+        $request->getPost('redirect_uri', urlencode($this->redirectUrl));
         $request->getHeaders()->addHeaders([
             'Content-Type' => 'application/x-www-form-urlencoded',
             'Content-length' => strlen($request->getPost()->toString())
