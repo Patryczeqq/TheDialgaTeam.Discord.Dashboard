@@ -71,11 +71,12 @@ namespace Home\Controller
                 $clientSecret = '';
 
                 $jsonArray = Json::decode($this->session->discordAppModelsJson, Json::TYPE_ARRAY);
-                $discordAppModels = (new ClassMethods())->hydrate($jsonArray, new DiscordAppModel());
 
-                /** @var DiscordAppModel $discordAppModel */
-                foreach ($discordAppModels as $discordAppModel)
+                foreach ($jsonArray as $key => $value)
                 {
+                    /** @var DiscordAppModel $discordAppModel */
+                    $discordAppModel = (new ClassMethods())->hydrate($value, new DiscordAppModel());
+
                     if ($discordAppModel->getClientId() != $clientId)
                         continue;
 
