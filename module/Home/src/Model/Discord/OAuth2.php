@@ -77,6 +77,8 @@ class OAuth2
             'Content-length' => strlen($request->getContent())
         ]);
 
+        $request->setContent(urlencode($request->getContent()));
+
         $response = $client->send($request);
         $json = $response->getBody();
         /*$jsonArray = Json::decode($json, Json::TYPE_ARRAY);
