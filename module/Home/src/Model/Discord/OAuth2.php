@@ -79,7 +79,7 @@ class OAuth2
 
         $response = $client->send($request);
         $json = $response->getBody();
-        $jsonArray = Json::decode($json, Json::TYPE_ARRAY);
+        /*$jsonArray = Json::decode($json, Json::TYPE_ARRAY);
 
         $_SESSION['access_token'] = $jsonArray['access_token'];
         $_SESSION['token_type'] = $jsonArray['token_type'];
@@ -88,7 +88,8 @@ class OAuth2
         $_SESSION['scope'] = $jsonArray['scope'];
         $_SESSION['session_start_time'] = microtime(true);
 
-        return $jsonArray;
+        return $jsonArray;*/
+        return $json;
     }
 
     /**

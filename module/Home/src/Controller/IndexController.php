@@ -97,9 +97,10 @@ namespace Home\Controller
                 $code = $_GET['code'];
 
                 $oAuth2 = new OAuth2($this->session->clientId, $this->session->clientSecret);
-                $oAuth2->getAccessToken($code);
+                $test = $oAuth2->getAccessToken($code);
 
-                return $this->redirect()->toRoute('dashboard');
+                //return $this->redirect()->toRoute('dashboard');
+                return new ViewModel(['test' => $test]);
             }
         }
 
