@@ -1,2 +1,2 @@
 <?php
-$this->test;
+echo "<pre>$this->test</pre>";
