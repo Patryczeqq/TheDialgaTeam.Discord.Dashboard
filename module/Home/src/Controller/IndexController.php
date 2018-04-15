@@ -76,8 +76,11 @@ namespace Home\Controller
                 /** @var DiscordAppModel $discordAppModel */
                 foreach ($discordAppModels as $discordAppModel)
                 {
-                    if ($discordAppModel->getClientId() == $clientId)
-                        $clientSecret = $discordAppModel->getClientSecret();
+                    if ($discordAppModel->getClientId() != $clientId)
+                        continue;
+
+                    $clientSecret = $discordAppModel->getClientSecret();
+                    break;
                 }
 
                 // Store ClientId and ClientSecret into session so that we won't forget.
