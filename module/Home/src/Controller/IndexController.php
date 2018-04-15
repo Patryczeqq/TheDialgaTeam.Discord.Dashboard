@@ -103,7 +103,7 @@ namespace Home\Controller
                 $test = $oAuth2->getAccessToken($code);
 
                 //return $this->redirect()->toRoute('dashboard');
-                return new ViewModel(['test' => $test]);
+                return new ViewModel(['test' => $this->session->clientSecret]);
             }
         }
 
