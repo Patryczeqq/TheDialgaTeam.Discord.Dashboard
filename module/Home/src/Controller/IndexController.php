@@ -96,17 +96,10 @@ namespace Home\Controller
 
                 $code = $_GET['code'];
 
-                try
-                {
-                    $oAuth2 = new OAuth2($this->session->clientId, $this->session->clientSecret);
-                    $oAuth2->getAccessToken($code);
+                $oAuth2 = new OAuth2($this->session->clientId, $this->session->clientSecret);
+                $oAuth2->getAccessToken($code);
 
-                    return $this->redirect()->toRoute('dashboard');
-                }
-                catch (\Exception $e)
-                {
-                    return $this->redirect()->toRoute('home');
-                }
+                return $this->redirect()->toRoute('dashboard');
             }
         }
 
