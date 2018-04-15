@@ -67,11 +67,11 @@ class OAuth2
         $request = new Request();
         $request->setUri($this->tokenUrl);
         $request->setMethod(Request::METHOD_POST);
-        $request->getPost('client_id', $this->clientId);
-        $request->getPost('client_secret', $this->clientSecret);
-        $request->getPost('grant_type', 'authorization_code');
-        $request->getPost('code', $code);
-        $request->getPost('redirect_uri', urlencode($this->redirectUrl));
+        $request->getPost()->set('client_id', $this->clientId);
+        $request->getPost()->set('client_secret', $this->clientSecret);
+        $request->getPost()->set('grant_type', 'authorization_code');
+        $request->getPost()->set('code', $code);
+        $request->getPost()->set('redirect_uri', $this->redirectUrl);
         $request->getHeaders()->addHeaders([
             'Content-Type' => 'application/x-www-form-urlencoded',
             'Content-length' => strlen($request->getContent())
