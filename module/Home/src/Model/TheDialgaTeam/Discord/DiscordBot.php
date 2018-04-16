@@ -33,8 +33,7 @@ class DiscordBot
      */
     public function __construct($options = null)
     {
-        if (isset($options) && is_array($options))
-        {
+        if (isset($options) && is_array($options)) {
             if (isset($options['url']) && !empty($options['url']))
                 $this->url = $options['url'];
 
