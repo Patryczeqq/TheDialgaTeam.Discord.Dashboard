@@ -11,7 +11,13 @@
  * file.
  */
 
+use Zend\Session\Storage\SessionArrayStorage;
+
 return [
     'session_config' => [
+    ],
+
+    'session_storage' => [
+        'type' => SessionArrayStorage::class,
     ],
 ];
