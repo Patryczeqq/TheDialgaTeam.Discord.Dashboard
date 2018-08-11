@@ -37,6 +37,9 @@
                 <li class="nav-item active">
                     <a class="nav-link" style="color: black" href="<?= $this->url('home') ?>">Home</a>
                 </li>
+				<li class="nav-item">
+                    <a class="nav-link" style="color: black" href="https://aggressivegaming.org">Back to Forum</a>
+                </li>
             </ul>
         </div>
     </nav>
