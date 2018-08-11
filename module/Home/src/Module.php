@@ -3,6 +3,7 @@
 namespace Home {
 
     use Zend\ModuleManager\Feature\ConfigProviderInterface;
+    use Zend\Mvc\ModuleRouteListener;
 
     class Module implements ConfigProviderInterface
     {
