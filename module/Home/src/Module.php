@@ -4,6 +4,7 @@ namespace Home {
 
     use Zend\ModuleManager\Feature\ConfigProviderInterface;
     use Zend\Mvc\ModuleRouteListener;
+    use Zend\Session\SessionManager;
 
     class Module implements ConfigProviderInterface
     {
