@@ -70,59 +70,5 @@ namespace Home {
                 $chain->attach('session.validate', array($validator, 'isValid'));
             }
         }
-
-        public function getServiceConfig()
-        {
-            return [
-                'factories' => [
-                    SessionManager::class => function ($container) {
-                        $config = $container->get('config');
-                        if (!isset($config['session'])) {
-                            $sessionManager = new SessionManager();
-                            Container::setDefaultManager($sessionManager);
-                            return $sessionManager;
-                        }
-
-                        $session = $config['session'];
-
-                        $sessionConfig = null;
-                        if (isset($session['config'])) {
-                            $class = isset($session['config']['class'])
-                                ? $session['config']['class']
-                                : SessionConfig::class;
-
-                            $options = isset($session['config']['options'])
-                                ? $session['config']['options']
-                                : [];
-
-                            $sessionConfig = new $class();
-                            $sessionConfig->setOptions($options);
-                        }
-
-                        $sessionStorage = null;
-                        if (isset($session['storage'])) {
-                            $class = $session['storage'];
-                            $sessionStorage = new $class();
-                        }
-
-                        $sessionSaveHandler = null;
-                        if (isset($session['save_handler'])) {
-                            // class should be fetched from service manager
-                            // since it will require constructor arguments
-                            $sessionSaveHandler = $container->get($session['save_handler']);
-                        }
-
-                        $sessionManager = new SessionManager(
-                            $sessionConfig,
-                            $sessionStorage,
-                            $sessionSaveHandler
-                        );
-
-                        Container::setDefaultManager($sessionManager);
-                        return $sessionManager;
-                    },
-                ],
-            ];
-        }
     }
 }

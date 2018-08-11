@@ -11,20 +11,7 @@
  * file.
  */
 
-use Zend\Session;
-
 return [
-    'session_manager' => [
-        'config' => [
-            'class' => Session\Config\SessionConfig::class,
-            'options' => [
-                'name' => 'TheDialgaTeam',
-            ],
-        ],
-        'storage' => Session\Storage\SessionArrayStorage::class,
-        'validators' => [
-            Session\Validator\RemoteAddr::class,
-            Session\Validator\HttpUserAgent::class,
-        ],
+    'session_config' => [
     ],
 ];
