@@ -1,12 +1,12 @@
 <?php
 
-namespace Home\Controller
-{
+namespace Home\Controller {
 
     use Home\Model\Discord\OAuth2;
     use Home\Model\Session;
     use Home\Model\TheDialgaTeam\Discord\DiscordBot;
     use Home\Model\TheDialgaTeam\Discord\Table\Model\DiscordAppModel;
+    use RestCord\DiscordClient;
     use Zend\Hydrator\ClassMethods;
     use Zend\Json\Json;
     use Zend\Mvc\Controller\AbstractActionController;
@@ -38,8 +38,7 @@ namespace Home\Controller
             $discordAppModels = $this->discordBot->discordApp->getDiscordAppModels();
             $discordAppModelsArray = array();
 
-            foreach ($discordAppModels as $discordAppModel)
-            {
+            foreach ($discordAppModels as $discordAppModel) {
                 $discordAppModelsArray[] = $discordAppModel->toArray();
             }
 
@@ -62,8 +61,7 @@ namespace Home\Controller
                 return $this->redirect()->toRoute('home');
 
             // If login button is clicked
-            if ($_POST['action'] == 'login')
-            {
+            if ($_POST['action'] == 'login') {
                 if (!$this->session->validateCsrfToken($_POST['csrf']))
                     return $this->redirect()->toRoute('home');
 
@@ -72,8 +70,7 @@ namespace Home\Controller
 
                 $jsonArray = Json::decode($this->session->discordAppModelsJson, Json::TYPE_ARRAY);
 
-                foreach ($jsonArray as $key => $value)
-                {
+                foreach ($jsonArray as $key => $value) {
                     /** @var DiscordAppModel $discordAppModel */
                     $discordAppModel = (new ClassMethods())->hydrate($value, new DiscordAppModel());
 
@@ -89,22 +86,19 @@ namespace Home\Controller
                 $this->session->clientSecret = $clientSecret;
 
                 $oAuth2 = new OAuth2($clientId, $clientSecret);
-                $scopes = [ $oAuth2::SCOPE_IDENTIFY, $oAuth2::SCOPE_GUILDS ];
+                $scopes = [$oAuth2::SCOPE_IDENTIFY, $oAuth2::SCOPE_GUILDS];
 
                 return $this->redirect()->toUrl($oAuth2->getAuthorizationUrl($scopes, $this->session->generateNewCsrfToken()));
-            }
-            else
-            {
+            } else {
                 if (!$this->session->validateCsrfToken($_GET['state']))
                     return $this->redirect()->toRoute('home');
 
                 $code = $_GET['code'];
 
                 $oAuth2 = new OAuth2($this->session->clientId, $this->session->clientSecret);
-                $test = $oAuth2->getAccessToken($code);
+                $oAuth2->getAccessToken($code);
 
-                //return $this->redirect()->toRoute('dashboard');
-                return new ViewModel(['test' => $test]);
+                return $this->redirect()->toRoute('dashboard');
             }
         }
 
@@ -112,6 +106,13 @@ namespace Home\Controller
         {
             if (!$this->session->startOrResumeSession())
                 return $this->redirect()->toRoute('home');
+
+            $oAuth2 = new OAuth2($this->session->clientId, $this->session->clientSecret);
+
+            if (!$oAuth2->isAccessTokenValid())
+                $oAuth2->getNewAccessToken();
+
+            $discordClient = new DiscordClient(['token' => $this->session->access_token]);
 
             return new ViewModel();
         }

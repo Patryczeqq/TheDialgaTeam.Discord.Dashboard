@@ -30,8 +30,7 @@ class DiscordApp extends TableGateway
         $jsonObject = $this->getTable();
         $result = array();
 
-        foreach ($jsonObject as $key => $value)
-        {
+        foreach ($jsonObject as $key => $value) {
             $result[] = (new ClassMethods())->hydrate($value, new DiscordAppModel());
         }
 

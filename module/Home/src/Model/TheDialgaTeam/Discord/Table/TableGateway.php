@@ -40,10 +40,8 @@ abstract class TableGateway
         $request->setUri($this->endpoint);
         $request->setMethod(Request::METHOD_GET);
 
-        if (isset($searchParams) && is_array($searchParams))
-        {
-            foreach ($searchParams as $key => $value)
-            {
+        if (isset($searchParams) && is_array($searchParams)) {
+            foreach ($searchParams as $key => $value) {
                 $request->getQuery($key, $value);
             }
         }

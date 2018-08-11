@@ -7,6 +7,12 @@ namespace Home\Model;
  * @property string discordAppModelsJson
  * @property string clientId
  * @property string clientSecret
+ * @property string access_token
+ * @property string token_type
+ * @property string expires_in
+ * @property string refresh_token
+ * @property string scope
+ * @property string session_start_time
  */
 class Session
 {
