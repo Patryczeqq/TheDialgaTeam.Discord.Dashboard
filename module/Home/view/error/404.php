@@ -1,22 +1,26 @@
-<?php $DevelopmentMode = false; ?>
+<?php
 
+use Zend\Mvc\Application;
+
+?>
     <h1>A 404 error occurred</h1>
     <h2><?= $this->message ?></h2>
 
-<?php
-if (isset($this->reason) && $this->reason):
-    $reasonMessage = '';
+<?php if (!empty($this->reason)) :
     switch ($this->reason) {
-        case 'error-controller-cannot-dispatch':
+        case Application::ERROR_CONTROLLER_CANNOT_DISPATCH:
             $reasonMessage = 'The requested controller was unable to dispatch the request.';
             break;
-        case 'error-controller-not-found':
+        case Application::ERROR_MIDDLEWARE_CANNOT_DISPATCH:
+            $reasonMessage = 'The requested middleware was unable to dispatch the request.';
+            break;
+        case Application::ERROR_CONTROLLER_NOT_FOUND:
             $reasonMessage = 'The requested controller could not be mapped to an existing controller class.';
             break;
-        case 'error-controller-invalid':
+        case Application::ERROR_CONTROLLER_INVALID:
             $reasonMessage = 'The requested controller was not dispatchable.';
             break;
-        case 'error-router-no-match':
+        case Application::ERROR_ROUTER_NO_MATCH:
             $reasonMessage = 'The requested URL could not be matched by routing.';
             break;
         default:
@@ -25,116 +29,79 @@ if (isset($this->reason) && $this->reason):
     }
     ?>
     <p><?= $reasonMessage ?></p>
-<?php
-endif;
+<?php endif ?>
 
-if (isset($this->controller) && $this->controller):
-    ?>
+<?php if (!empty($this->controller)) : ?>
     <dl>
         <dt>Controller:</dt>
         <dd>
             <?= $this->escapeHtml($this->controller) ?>
             <?php
-            if (isset($this->controller_class) && $this->controller_class && $this->controller_class != $this->controller) {
-                echo '(' . sprintf('resolves to %s', $this->escapeHtml($this->controller_class)) . ')';
+            if (!empty($this->controller_class) && $this->controller_class != $this->controller) {
+                printf('(resolves to %s)', $this->escapeHtml($this->controller_class));
             }
             ?>
         </dd>
     </dl>
-<?php
-endif;
+<?php endif ?>
 
-if (isset($this->display_exceptions) && $this->display_exceptions):
-    if (isset($this->exception) && ($this->exception instanceof Exception || $this->exception instanceof Error)):
-        ?>
+<?php if (!empty($this->display_exceptions)) : ?>
+    <?php if (isset($this->exception)
+        && ($this->exception instanceof \Exception || $this->exception instanceof \Error)) : ?>
         <hr/>
+
         <h2>Additional information:</h2>
         <h3><?= get_class($this->exception) ?></h3>
         <dl>
-            <?php
-            if ($DevelopmentMode):
-                ?>
-                <dt>File:</dt>
-                <dd>
-                    <pre class="prettyprint linenums"><?= $this->exception->getFile() ?>
-                        :<?= $this->exception->getLine() ?></pre>
-                </dd>
-                <dt>Message:</dt>
-                <dd>
-                    <pre class="prettyprint linenums"><?= $this->exception->getMessage() ?></pre>
-                </dd>
-                <dt>Stack trace:</dt>
-                <dd>
-                    <pre class="prettyprint linenums"><?= $this->exception->getTraceAsString() ?></pre>
-                </dd>
-            <?php
-            else:
-                ?>
-                <dt>Message:</dt>
-                <dd>
-                    <pre class="prettyprint linenums"><?= $this->exception->getMessage() ?></pre>
-                </dd>
-            <?php
-            endif;
-            ?>
+            <dt>File:</dt>
+            <dd>
+                <pre><?= $this->exception->getFile() ?>:<?= $this->exception->getLine() ?></pre>
+            </dd>
+            <dt>Message:</dt>
+            <dd>
+                <pre><?= $this->escapeHtml($this->exception->getMessage()) ?></pre>
+            </dd>
+            <dt>Stack trace:</dt>
+            <dd>
+                <pre><?= $this->escapeHtml($this->exception->getTraceAsString()) ?></pre>
+            </dd>
         </dl>
-        <?php
-        $e = $this->exception->getPrevious();
-        $icount = 0;
-        if ($e) :
-            ?>
+
+        <?php if ($ex = $this->exception->getPrevious()) : ?>
             <hr/>
+
             <h2>Previous exceptions:</h2>
-            <ul class="unstyled">
-                <?php
-                while ($e) :
-                    ?>
+            <ul class="list-unstyled">
+                <?php $icount = 0 ?>
+                <?php while ($ex) : ?>
                     <li>
-                        <h3><?= get_class($e) ?></h3>
+                        <h3><?= get_class($ex) ?></h3>
                         <dl>
-                            <?php
-                            if ($DevelopmentMode):
-                                ?>
-                                <dt>File:</dt>
-                                <dd>
-                                    <pre class="prettyprint linenums"><?= $e->getFile() ?>:<?= $e->getLine() ?></pre>
-                                </dd>
-                                <dt>Message:</dt>
-                                <dd>
-                                    <pre class="prettyprint linenums"><?= $e->getMessage() ?></pre>
-                                </dd>
-                                <dt>Stack trace:</dt>
-                                <dd>
-                                    <pre class="prettyprint linenums"><?= $e->getTraceAsString() ?></pre>
-                                </dd>
-                            <?php
-                            else:
-                                ?>
-                                <dt>Message:</dt>
-                                <dd>
-                                    <pre class="prettyprint linenums"><?= $e->getMessage() ?></pre>
-                                </dd>
-                            <?php
-                            endif;
-                            ?>
+                            <dt>File:</dt>
+                            <dd>
+                                <pre><?= $ex->getFile() ?>:<?= $ex->getLine() ?></pre>
+                            </dd>
+                            <dt>Message:</dt>
+                            <dd>
+                                <pre><?= $this->escapeHtml($ex->getMessage()) ?></pre>
+                            </dd>
+                            <dt>Stack trace:</dt>
+                            <dd>
+                                <pre><?= $this->escapeHtml($ex->getTraceAsString()) ?></pre>
+                            </dd>
                         </dl>
                     </li>
                     <?php
-                    $e = $e->getPrevious();
-                    $icount += 1;
-                    if ($icount >= 50) {
-                        echo "<li>There may be more exceptions, but we have no enough memory to proccess it.</li>";
+                    $ex = $ex->getPrevious();
+                    if (++$icount >= 50) {
+                        echo '<li>There may be more exceptions, but we do not have enough memory to process it.</li>';
                         break;
                     }
-                endwhile;
-                ?>
+                    ?>
+                <?php endwhile ?>
             </ul>
-        <?php
-        endif;
-    else:
-        ?>
+        <?php endif ?>
+    <?php else : ?>
         <h3>No Exception available</h3>
-    <?php
-    endif;
-endif
-?>
+    <?php endif ?>
+<?php endif ?>

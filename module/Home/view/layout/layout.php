@@ -13,13 +13,13 @@
     <!-- Le styles -->
     <?= $this->headLink(['rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'])
         ->prependStylesheet($this->basePath('css/extra.css'))
-        ->prependStylesheet($this->basePath('vendor/twbs/bootstrap/dist/css/bootstrap.min.css'))
+        ->prependStylesheet($this->basePath('vendor/twbs/bootstrap/dist/css/bootstrap.css'))
     ?>
 
     <!-- Scripts -->
     <?= $this->headScript()
-        ->prependFile($this->basePath('vendor/twbs/bootstrap/dist/js/bootstrap.min.js'))
-        ->prependFile($this->basePath('vendor/components/jquery/jquery.min.js'))
+        ->prependFile($this->basePath('vendor/twbs/bootstrap/dist/js/bootstrap.js'))
+        ->prependFile($this->basePath('vendor/components/jquery/jquery.js'))
     ?>
 </head>
 <body>
@@ -44,12 +44,8 @@
     <?= $this->content ?>
     <hr/>
     <footer>
-        <p>
-            This site is powered by
-            <a href="https://framework.zend.com/">Zend Framework</a>.
-            <br/>
-            &copy; 2015 - <?= date('Y') ?> by The Dialga Team.
-        </p>
+        <p>&copy; 2005 - <?= date('Y') ?> by Zend Technologies Ltd. All rights reserved.</p>
+        <p>&copy; 2005 - <?= date('Y') ?> by The Dialga Team.</p>
     </footer>
 </div>
 <?= $this->inlineScript() ?>
