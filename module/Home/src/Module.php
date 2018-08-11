@@ -4,7 +4,10 @@ namespace Home {
 
     use Zend\ModuleManager\Feature\ConfigProviderInterface;
     use Zend\Mvc\ModuleRouteListener;
+    use Zend\Session\Container;
     use Zend\Session\SessionManager;
+    use Zend\Session\Validator\HttpUserAgent;
+    use Zend\Session\Validator\RemoteAddr;
 
     class Module implements ConfigProviderInterface
     {
@@ -23,9 +26,7 @@ namespace Home {
 
         public function bootstrapSession($e)
         {
-            $session = $e->getApplication()
-                ->getServiceManager()
-                ->get(SessionManager::class);
+            $session = $e->getApplication()->getServiceManager()->get(SessionManager::class);
             $session->start();
 
             $container = new Container('initialized');
@@ -42,33 +43,13 @@ namespace Home {
             $container->remoteAddr = $request->getServer()->get('REMOTE_ADDR');
             $container->httpUserAgent = $request->getServer()->get('HTTP_USER_AGENT');
 
-            $config = $serviceManager->get('Config');
-            if (!isset($config['session'])) {
-                return;
-            }
-
-            $sessionConfig = $config['session'];
-
-            if (!isset($sessionConfig['validators'])) {
-                return;
-            }
-
             $chain = $session->getValidatorChain();
 
-            foreach ($sessionConfig['validators'] as $validator) {
-                switch ($validator) {
-                    case Validator\HttpUserAgent::class:
-                        $validator = new $validator($container->httpUserAgent);
-                        break;
-                    case Validator\RemoteAddr::class:
-                        $validator = new $validator($container->remoteAddr);
-                        break;
-                    default:
-                        $validator = new $validator();
-                }
+            $validator = new RemoteAddr($container->remoteAddr);
+            $chain->attach('session.validate', array($validator, 'isValid'));
 
-                $chain->attach('session.validate', array($validator, 'isValid'));
-            }
+            $validator = new HttpUserAgent($container->httpUserAgent);
+            $chain->attach('session.validate', array($validator, 'isValid'));
         }
     }
 }
