@@ -37,10 +37,13 @@
             <li class="nav-item active">
                 <a class="nav-link" style="color: black" href="<?= $this->url('home') ?>">Home</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" style="color: black" href="https://aggressivegaming.org">Back to forum</a>
+            </li>
         </ul>
     </div>
 </nav>
-<div class="container">
+<div class="container" style="padding-top: 4.5rem;">
     <?= $this->content ?>
     <hr/>
     <footer>
