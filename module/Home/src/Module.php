@@ -2,6 +2,8 @@
 
 namespace Home {
 
+    use Zend\EventManager\EventInterface;
+    use Zend\ModuleManager\Feature\BootstrapListenerInterface;
     use Zend\ModuleManager\Feature\ConfigProviderInterface;
     use Zend\Mvc\ModuleRouteListener;
     use Zend\Session\Container;
@@ -9,14 +11,14 @@ namespace Home {
     use Zend\Session\Validator\HttpUserAgent;
     use Zend\Session\Validator\RemoteAddr;
 
-    class Module implements ConfigProviderInterface
+    class Module implements ConfigProviderInterface, BootstrapListenerInterface
     {
         public function getConfig()
         {
             return include __DIR__ . '/../config/module.config.php';
         }
 
-        public function onBootstrap($e)
+        public function onBootstrap(EventInterface $e)
         {
             $eventManager = $e->getApplication()->getEventManager();
             $moduleRouteListener = new ModuleRouteListener();

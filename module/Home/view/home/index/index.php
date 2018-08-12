@@ -15,34 +15,25 @@
             <div class="message-body">
                 <p>To get started, select the bot instance to login with discord and choose the guild you would like
                     to setup.</p>
-                <form method="post" action="<?= $this->url('login') ?>">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <label class="input-group-text" for="inputGroupSelect01">Bot Name</label>
-                        </div>
-                        <select class="custom-select" name="clientId">
-                            <?php
-                            $numOptions = 0;
-                            /** @var \Home\Model\TheDialgaTeam\Discord\Table\Model\DiscordAppModel $discordAppModel */
-                            foreach ($this->discordAppModels as $discordAppModel):
-                                if (!empty($discordAppModel->getClientSecret())): ?>
-                                    <option value="<?= $discordAppModel->getClientId() ?>"><?= $discordAppModel->getAppName() ?></option>
-                                    <?php
-                                    $numOptions++;
-                                endif;
-                            endforeach;
+                <?php
+                /** @var \Zend\Form\Form $form */
+                $form = $this->indexForm;
+                $form->setAttribute('action', $this->url('login'));
+                $form->setAttribute('method', 'post');
+                $form->prepare();
 
-                            if ($numOptions == 0)
-                                echo '<option>No bot instance available (Try again later)</option>';
-                            ?>
-                        </select>
+                echo $this->form()->openTag($form);
+                ?>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <?= $this->formRow($form->get('botName')) ?>
                     </div>
-                    <input type="hidden" name="action" value="login"/>
-                    <input type="hidden" name="csrf" value="<?= $this->csrf ?>"/>
-                    <button class="btn btn-primary" type="submit"
-                            style="color: white" <?= $numOptions == 0 ? 'disabled' : '' ?>>Login with Discord
-                    </button>
-                </form>
+                    <?= $this->formRow($form->get('clientId')) ?>
+                </div>
+                <?= $this->formRow($form->get('action')) ?>
+                <?= $this->formRow($form->get('loginCsrf')) ?>
+                <?= $this->formRow($form->get('login')) ?>
+                <?= $this->form()->closeTag() ?>
             </div>
         </div>
     </div>

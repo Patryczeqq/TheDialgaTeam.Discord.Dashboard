@@ -24,7 +24,9 @@
         "zendframework/zend-stdlib": "^3.2",
         "zendframework/zend-uri": "^2.6",
         "zendframework/zend-validator": "^2.10",
-        "zendframework/zend-view": "^2.10"
+        "zendframework/zend-view": "^2.10",
+        "zendframework/zend-form": "^2.12",
+        "zendframework/zend-inputfilter": "^2.8"
     },
     "autoload": {
         "psr-4": {

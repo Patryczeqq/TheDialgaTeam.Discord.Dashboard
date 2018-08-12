@@ -2,19 +2,48 @@
 
 namespace Home\Model\Discord;
 
+use Home\Model\Discord\OAuth2\AccessToken;
 use Zend\Http\Client;
 use Zend\Http\Request;
+use Zend\Hydrator\ClassMethods;
 use Zend\Json\Json;
+use Zend\Session\Container;
 
+/**
+ * Class OAuth2
+ * @package Home\Model\Discord
+ */
 class OAuth2
 {
+    /**
+     * @var string
+     */
     private $clientId;
+
+    /**
+     * @var string
+     */
     private $clientSecret;
 
+    /**
+     * @var string
+     */
     private $authorizationUrl = 'https://discordapp.com/api/oauth2/authorize';
+
+    /**
+     * @var string
+     */
     private $tokenUrl = 'https://discordapp.com/api/oauth2/token';
 
-    private $redirectUrl = 'https://thedialgateambot.aggressivegaming.org/login';
+    /**
+     * @var string
+     */
+    private $redirectUrl = 'https://discord.aggressivegaming.org/login';
+
+    /**
+     * @var Container
+     */
+    private $sessionContainer;
 
     const SCOPE_BOT = 'bot';
     const SCOPE_CONNECTIONS = 'connections';
@@ -29,6 +58,12 @@ class OAuth2
     const SCOPE_RPC_NOTIFICAITONS_READ = 'rpc.notifications.read';
     const SCOPE_WEBHOOK_INCOMING = 'webhook.incoming';
 
+    /**
+     * OAuth2 constructor.
+     * @param string $clientId
+     * @param string $clientSecret
+     * @param null|string $redirectUrl
+     */
     public function __construct($clientId, $clientSecret, $redirectUrl = null)
     {
         $this->clientId = $clientId;
@@ -36,31 +71,68 @@ class OAuth2
 
         if (isset($redirectUrl))
             $this->redirectUrl = $redirectUrl;
+
+        $this->sessionContainer = new Container('discord_oauth2_access_token');
     }
 
     /**
-     * Get authorization url string.
-     * @param $scopes string|array Scopes
-     * @param $state string Csrf token.
-     * @return string Authorization url string.
+     * @param string[] $scopes
+     * @param string $state
+     * @return string
      */
     public function getAuthorizationUrl($scopes, $state)
     {
-        if (is_array($scopes))
-            $scope = join("%20", $scopes);
-        else
-            $scope = $scopes;
+        $this->clearAccessTokenInSession();
+
+        $scope = is_array($scopes) ? join("%20", $scopes) : $scopes;
 
         return sprintf("%s?response_type=code&client_id=%s&scope=%s&state=%s&redirect_uri=%s",
             $this->authorizationUrl, $this->clientId, $scope, $state, urlencode($this->redirectUrl));
     }
 
     /**
-     * Get access token.
-     * @param $code string
-     * @return array
+     * @param $authorizationCode
+     * @return null|object|AccessToken
      */
-    public function getAccessToken($code)
+    public function getAccessToken($authorizationCode)
+    {
+        if (!isset($authorizationCode))
+            return null;
+
+        $accessTokenObject = $this->getAccessTokenResponse('authorization_code', $authorizationCode);
+        $this->setAccessTokenInSession($accessTokenObject);
+
+        return $accessTokenObject;
+    }
+
+    /**
+     * @return null|object|AccessToken
+     */
+    public function getNewAccessToken()
+    {
+        if (!isset($this->sessionContainer->refresh_token))
+            return null;
+
+        $accessTokenObject = $this->getAccessTokenResponse('refresh_token', $this->sessionContainer->refresh_token);
+        $this->setAccessTokenInSession($accessTokenObject);
+
+        return $accessTokenObject;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAccessTokenExpired()
+    {
+        return isset($this->sessionContainer->access_token);
+    }
+
+    /**
+     * @param string $grantType
+     * @param string $param
+     * @return object|AccessToken
+     */
+    private function getAccessTokenResponse($grantType, $param)
     {
         $client = new Client();
 
@@ -69,69 +141,39 @@ class OAuth2
         $request->setMethod(Request::METHOD_POST);
         $request->getPost()->set('client_id', $this->clientId);
         $request->getPost()->set('client_secret', $this->clientSecret);
-        $request->getPost()->set('grant_type', 'authorization_code');
-        $request->getPost()->set('code', $code);
+
+        if ($grantType == 'authorization_code') {
+            $request->getPost()->set('grant_type', 'authorization_code');
+            $request->getPost()->set('code', $param);
+        } elseif ($grantType == 'refresh_token') {
+            $request->getPost()->set('grant_type', 'refresh_token');
+            $request->getPost()->set('refresh_token', $param);
+        }
+
         $request->getPost()->set('redirect_uri', $this->redirectUrl);
-        $request->getHeaders()->addHeaders([
-            'Content-Type' => 'application/x-www-form-urlencoded',
-            'Content-length' => strlen(http_build_query($request->getPost()->toArray(), null, '&'))
-        ]);
 
         $response = $client->send($request);
         $json = $response->getBody();
         $jsonArray = Json::decode($json, Json::TYPE_ARRAY);
 
-        $_SESSION['access_token'] = $jsonArray['access_token'];
-        $_SESSION['token_type'] = $jsonArray['token_type'];
-        $_SESSION['expires_in'] = $jsonArray['expires_in'];
-        $_SESSION['refresh_token'] = $jsonArray['refresh_token'];
-        $_SESSION['scope'] = $jsonArray['scope'];
-        $_SESSION['session_start_time'] = microtime(true);
+        return (new ClassMethods())->hydrate($jsonArray, new AccessToken());
+    }
 
-        return $jsonArray;
+    private function clearAccessTokenInSession()
+    {
+        $this->sessionContainer->setExpirationSeconds(0);
     }
 
     /**
-     * Get new access token.
-     * @return array
+     * @param AccessToken|object $accessTokenObject
      */
-    public function getNewAccessToken()
+    private function setAccessTokenInSession($accessTokenObject)
     {
-        $client = new Client();
-
-        $request = new Request();
-        $request->setUri($this->tokenUrl);
-        $request->setMethod(Request::METHOD_POST);
-        $request->getHeaders()->addHeaders([
-            'Content-Type' => 'application/x-www-form-urlencoded'
-        ]);
-
-        $request->getPost('client_id', $this->clientId);
-        $request->getPost('client_secret', $this->clientSecret);
-        $request->getPost('grant_type', 'refresh_token');
-        $request->getPost('refresh_token', $_SESSION['refresh_token']);
-        $request->getPost('redirect_uri', $this->redirectUrl);
-
-        $response = $client->send($request);
-        $json = $response->getBody();
-        $jsonArray = Json::decode($json, Json::TYPE_ARRAY);
-
-        $_SESSION['access_token'] = $jsonArray['access_token'];
-        $_SESSION['token_type'] = $jsonArray['token_type'];
-        $_SESSION['expires_in'] = $jsonArray['expires_in'];
-        $_SESSION['refresh_token'] = $jsonArray['refresh_token'];
-        $_SESSION['scope'] = $jsonArray['scope'];
-        $_SESSION['session_start_time'] = microtime(true);
-
-        return $jsonArray;
-    }
-
-    /**
-     * Validate if the access token is still valid.
-     * @return bool true if the access token is still valid, else false.
-     */
-    public function isAccessTokenValid()
-    {
-        return microtime(true) - $_SESSION['session_start_time'] < $_SESSION['expires_in'];
+        $this->sessionContainer->access_token = $accessTokenObject->getAccessToken();
+        $this->sessionContainer->token_type = $accessTokenObject->getTokenType();
+        $this->sessionContainer->expires_in = $accessTokenObject->getExpiresIn();
+        $this->sessionContainer->refresh_token = $accessTokenObject->getRefreshToken();
+        $this->sessionContainer->scope = $accessTokenObject->getScope();
+        $this->sessionContainer->setExpirationSeconds($accessTokenObject->getExpiresIn(), "access_token");
     }
 }
