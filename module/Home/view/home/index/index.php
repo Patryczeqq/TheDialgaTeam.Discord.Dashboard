@@ -36,5 +36,14 @@
                 <?= $this->form()->closeTag() ?>
             </div>
         </div>
+        <div class="message">
+            <div class="message-header">Features</div>
+            <div class="message-body">
+                <p>Free Game Notification - It will notify users about any potential free game that you can grab before
+                    the promotion expires. (Offers are usually from humble bundle, gog or directly from steam)</p>
+                <p>Custom Vanity Links - Provides a custom vanity link that user can join your server with. (Anti
+                    Raiding + Rate Limiting applies)</p>
+            </div>
+        </div>
     </div>
 </div>
