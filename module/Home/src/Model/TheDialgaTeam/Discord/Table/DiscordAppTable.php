@@ -5,7 +5,7 @@ namespace Home\Model\TheDialgaTeam\Discord\Table;
 class DiscordAppTable
 {
     /**
-     * @var long
+     * @var int
      */
     private $id;
 
@@ -35,22 +35,22 @@ class DiscordAppTable
     private $botToken;
 
     /**
-     * @var long
+     * @var int
      */
     private $lastUpdateCheck;
 
     /**
-     * @return long
+     * @return int
      */
-    public function getId(): long
+    public function getId(): int
     {
         return $this->id;
     }
 
     /**
-     * @param long $id
+     * @param int $id
      */
-    public function setId(long $id): void
+    public function setId(int $id): void
     {
         $this->id = $id;
     }
@@ -136,17 +136,17 @@ class DiscordAppTable
     }
 
     /**
-     * @return long
+     * @return int
      */
-    public function getLastUpdateCheck(): long
+    public function getLastUpdateCheck(): int
     {
         return $this->lastUpdateCheck;
     }
 
     /**
-     * @param long $lastUpdateCheck
+     * @param int $lastUpdateCheck
      */
-    public function setLastUpdateCheck(long $lastUpdateCheck): void
+    public function setLastUpdateCheck(int $lastUpdateCheck): void
     {
         $this->lastUpdateCheck = $lastUpdateCheck;
     }

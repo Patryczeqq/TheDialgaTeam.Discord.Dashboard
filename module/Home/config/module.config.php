@@ -28,6 +28,16 @@ namespace Home {
                         ],
                     ],
                 ],
+                'login_authentication' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route' => '/login/authentication',
+                        'defaults' => [
+                            'controller' => Controller\IndexController::class,
+                            'action' => 'loginAuthentication',
+                        ],
+                    ],
+                ],
                 'dashboard' => [
                     'type' => Literal::class,
                     'options' => [

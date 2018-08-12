@@ -18,8 +18,10 @@
                 <?php
                 /** @var \Zend\Form\Form $form */
                 $form = $this->indexForm;
-                $form->setAttribute('action', $this->url('login'));
-                $form->setAttribute('method', 'post');
+                $form->setAttributes([
+                    'action' => $this->url('login'),
+                    'method' => 'post'
+                ]);
                 $form->prepare();
 
                 echo $this->form()->openTag($form);
@@ -30,9 +32,9 @@
                     </div>
                     <?= $this->formRow($form->get('clientId')) ?>
                 </div>
+                <?= $this->formRow($form->get('login')) ?>
                 <?= $this->formRow($form->get('action')) ?>
                 <?= $this->formRow($form->get('loginCsrf')) ?>
-                <?= $this->formRow($form->get('login')) ?>
                 <?= $this->form()->closeTag() ?>
             </div>
         </div>
@@ -42,7 +44,7 @@
                 <p>Free Game Notification - It will notify users about any potential free game that you can grab before
                     the promotion expires. (Offers are usually from humble bundle, gog or directly from steam)</p>
                 <p>Custom Vanity Links - Provides a custom vanity link that user can join your server with. (Anti
-                    Raiding + Rate Limiting applies)</p>
+                    Raiding + Custom Rate Limiting)</p>
             </div>
         </div>
     </div>
