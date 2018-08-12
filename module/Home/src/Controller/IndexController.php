@@ -6,7 +6,6 @@ namespace Home\Controller {
     use Home\Model\Form\Index\IndexActionForm;
     use Home\Model\Form\Index\LoginActionForm;
     use Home\Model\TheDialgaTeam\Discord\NancyGateway;
-    use Zend\Http\Request;
     use Zend\Mvc\Controller\AbstractActionController;
     use Zend\Session\Container;
     use Zend\Session\SessionManager;
@@ -29,17 +28,11 @@ namespace Home\Controller {
          */
         private $sessionContainer;
 
-        /**
-         * @var Request
-         */
-        private $request;
-
         public function __construct()
         {
             $this->nancyGateway = new NancyGateway();
             $this->session = (new Container('initialized'))->getManager();
             $this->sessionContainer = new Container('discord_session');
-            $this->request = $this->getRequest();
         }
 
         public function indexAction()
@@ -69,13 +62,13 @@ namespace Home\Controller {
                 return $this->redirect()->toRoute('home');
             }
 
-            if (!empty($this->request->getQuery('error'))) {
+            if (!empty($this->getRequest()->getQuery('error'))) {
                 return $this->redirect()->toRoute('home');
             }
 
             $form = new IndexActionForm($discordAppTables);
             $form->setValidationGroup('clientId', 'action', 'loginCsrf');
-            $form->setData($this->request->getPost());
+            $form->setData($this->getRequest()->getPost());
 
             if (!$form->isValid()) {
                 return $this->redirect()->toRoute('home');
