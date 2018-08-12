@@ -26,7 +26,7 @@
                 ?>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <?= $this->formRow($form->get('botName')) ?>
+                        <label class="input-group-text" for="clientId">Bot Name</label>
                     </div>
                     <?= $this->formRow($form->get('clientId')) ?>
                 </div>

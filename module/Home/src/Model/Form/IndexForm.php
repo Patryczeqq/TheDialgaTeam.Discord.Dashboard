@@ -9,11 +9,6 @@ use Zend\Form\Form;
 class IndexForm
 {
     /**
-     * @var Element
-     */
-    private $botNameLabel;
-
-    /**
      * @var Element\Select
      */
     private $clientIdSelect;
@@ -44,11 +39,6 @@ class IndexForm
      */
     public function __construct($discordAppTables)
     {
-        $this->botNameLabel = new Element('botName');
-        $this->botNameLabel->setLabel("Bot Name");
-        $this->botNameLabel->setAttribute("class", "input-group-text");
-        $this->botNameLabel->setAttribute("for", "clientId");
-
         $this->clientIdSelect = new Element\Select('clientId');
         $this->clientIdSelect->setAttribute("class", "custom-select");
 
@@ -77,7 +67,6 @@ class IndexForm
         }
 
         $this->form = new Form('login');
-        $this->form->add($this->botNameLabel);
         $this->form->add($this->clientIdSelect);
         $this->form->add($this->actionHidden);
         $this->form->add($this->loginCsrf);
