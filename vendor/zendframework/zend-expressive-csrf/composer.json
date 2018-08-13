@@ -1,0 +1,73 @@
+{
+    "name": "zendframework/zend-expressive-csrf",
+    "description": "CSRF token generation and validation for PSR-7 and PSR-15 applications using zend-expressive-session",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "csrf",
+        "expressive",
+        "psr-7",
+        "psr-15",
+        "security",
+        "session",
+        "zf",
+        "zendframework",
+        "zend-expressive"
+    ],
+    "support": {
+        "docs": "https://docs.zendframework.com/zend-expressive-csrf/",
+        "issues": "https://github.com/zendframework/zend-expressive-csrf/issues",
+        "source": "https://github.com/zendframework/zend-expressive-csrf",
+        "rss": "https://github.com/zendframework/zend-expressive-csrf/releases.atom",
+        "slack": "https://zendframework-slack.herokuapp.com",
+        "forum": "https://discourse.zendframework.com/c/questions/expressive"
+    },
+    "require": {
+        "php": "^7.1",
+        "psr/container": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "zendframework/zend-expressive-session": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0.2",
+        "zendframework/zend-coding-standard": "~1.0.0",
+        "zendframework/zend-expressive-flash": "^1.0"
+    },
+    "conflict": {
+        "phpspec/prophecy": "<1.7.2"
+    },
+    "suggest": {
+        "zendframework/zend-expressive-flash": "^1.0.0alpha1 || ^1.0 To back CSRF tokens using flash messages"
+    },
+    "autoload": {
+        "psr-4": {
+            "Zend\\Expressive\\Csrf\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ZendTest\\Expressive\\Csrf\\": "test/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev",
+            "dev-develop": "1.1.x-dev"
+        },
+        "zf": {
+            "config-provider": "Zend\\Expressive\\Csrf\\ConfigProvider"
+        }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
+    }
+}
