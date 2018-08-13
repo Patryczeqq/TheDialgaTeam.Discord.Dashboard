@@ -85,11 +85,6 @@
             "App\\": "src/App/src/"
         }
     },
-    "autoload-dev": {
-        "psr-4": {
-            "AppTest\\": "test/AppTest/"
-        }
-    },
     "scripts": {
         "post-create-project-cmd": [
             "@development-enable"
