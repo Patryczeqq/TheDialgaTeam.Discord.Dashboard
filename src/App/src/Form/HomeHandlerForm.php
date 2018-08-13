@@ -13,6 +13,9 @@ use Zend\Form\Form;
  */
 class HomeHandlerForm extends Form
 {
+    /**
+     * @var SessionCsrfGuard
+     */
     private $guard;
 
     /**
@@ -87,7 +90,7 @@ class HomeHandlerForm extends Form
             'name' => 'action',
             'type' => Element\Hidden::class,
             'attributes' => [
-                'value' => 'login'
+                'value' => 'discordAppAuthentication'
             ]
         ]);
 

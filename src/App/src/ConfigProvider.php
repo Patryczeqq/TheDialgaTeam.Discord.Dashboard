@@ -41,6 +41,7 @@ class ConfigProvider
             'factories' => [
                 NancyGateway::class => NancyGatewayFactory::class,
                 Handler\HomeHandler::class => Handler\HomeHandlerFactory::class,
+                Handler\DiscordAppAuthenticationHandler::class => Handler\DiscordAppAuthenticationHandlerFactory::class,
             ],
         ];
     }

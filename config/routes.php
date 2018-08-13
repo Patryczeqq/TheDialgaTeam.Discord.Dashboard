@@ -39,9 +39,9 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
         App\Handler\HomeHandler::class
     ], 'home');
 
-    $app->get('/login', [
+    $app->route('/discordAppAuthentication', [
         Zend\Expressive\Session\SessionMiddleware::class,
         Zend\Expressive\Csrf\CsrfMiddleware::class,
-        App\Handler\HomeHandler::class
-    ], 'login');
+        App\Handler\DiscordAppAuthenticationHandler::class
+    ], ['GET', 'POST'], 'discordAppAuthentication');
 };
