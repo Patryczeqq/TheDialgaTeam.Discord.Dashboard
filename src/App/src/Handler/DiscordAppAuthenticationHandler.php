@@ -5,6 +5,7 @@ namespace App\Handler;
 use App\Form\CsrfGuardedForm;
 use App\Form\HomeHandlerForm;
 use App\TheDialgaTeam\Discord\NancyGateway;
+use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -39,7 +40,13 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
 
         if (isset($this->post['action']) && $this->post['action'] == 'discordAppAuthentication') {
             // If this request is from HomeHandler form.
-            $form = new HomeHandlerForm($this->guard, $this->session, $this->nancyGateway->getDiscordAppTable());
+            $discordAppTables = $this->nancyGateway->getDiscordAppTable();
+
+            if (count($discordAppTables) == 0) {
+                return $this->onError(self::ERROR_NANCY_GATEWAY);
+            }
+
+            $form = new HomeHandlerForm($this->guard, $this->session, $discordAppTables);
             $form->setData($this->post);
 
             if (!$form->isValid()) {
@@ -83,8 +90,9 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
             $clientId = $this->session->get('clientId');
             $discordAppTables = $this->nancyGateway->getDiscordAppTable($clientId);
 
-            if (count($discordAppTables) == 0)
+            if (count($discordAppTables) == 0) {
                 return $this->onError(self::ERROR_NANCY_GATEWAY);
+            }
 
             $discordOAuth2 = new Discord([
                 'clientId' => $discordAppTables[0]->getClientId(),
@@ -103,6 +111,38 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
             } catch (\Exception $ex) {
                 return $this->onError(self::ERROR_DISCORD_GATEWAY);
             }
+        }
+
+        if ($this->session->has('discord_oauth2')) {
+            // If session exist.
+            $accessToken = new AccessToken($this->session->get('discord_oauth2'));
+
+            if ($accessToken->hasExpired()) {
+                $clientId = $this->session->get('clientId');
+                $discordAppTables = $this->nancyGateway->getDiscordAppTable($clientId);
+
+                if (count($discordAppTables) == 0) {
+                    return $this->onError(self::ERROR_NANCY_GATEWAY);
+                }
+
+                $discordOAuth2 = new Discord([
+                    'clientId' => $discordAppTables[0]->getClientId(),
+                    'clientSecret' => $discordAppTables[0]->getClientSecret(),
+                    'redirectUri' => $this->urlHelper->generate('discordAppAuthentication')
+                ]);
+
+                try {
+                    $token = $discordOAuth2->getAccessToken('refresh_token', [
+                        'refresh_token' => $accessToken->getRefreshToken()
+                    ]);
+
+                    $this->session->set('discord_oauth2', $token->jsonSerialize());
+                } catch (\Exception $ex) {
+                    return $this->onError(self::ERROR_DISCORD_GATEWAY);
+                }
+            }
+
+            return $handler->handle($request);
         }
 
         return $this->onError('Malformed or Invalid request have been made.');

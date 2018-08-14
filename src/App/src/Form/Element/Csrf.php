@@ -3,11 +3,15 @@
 namespace App\Form\Element;
 
 use Zend\Expressive\Csrf\SessionCsrfGuard;
-use Zend\Filter\Callback;
 use Zend\Filter\StringTrim;
+use Zend\Form\Element;
 
-class Csrf extends \Zend\Form\Element\Csrf
+class Csrf extends Element
 {
+    protected $attributes = [
+        'type' => 'hidden',
+    ];
+
     /**
      * @var SessionCsrfGuard
      */
@@ -15,6 +19,8 @@ class Csrf extends \Zend\Form\Element\Csrf
 
     public function setOptions($options)
     {
+        parent::setOptions($options);
+
         if (isset($options['session_guard'])) {
             $this->guard = $options['session_guard'];
         }
@@ -32,7 +38,7 @@ class Csrf extends \Zend\Form\Element\Csrf
             ],
             'validators' => [
                 [
-                    'name' => Callback::class,
+                    'name' => 'callback',
                     'options' => [
                         'callback' => function ($value) {
                             return $this->guard->validateToken($value);
