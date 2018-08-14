@@ -50,5 +50,5 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
         Zend\Expressive\Session\SessionMiddleware::class,
         Zend\Expressive\Csrf\CsrfMiddleware::class,
         App\Handler\LogoutHandler::class
-    ]);
+    ], 'logout');
 };
