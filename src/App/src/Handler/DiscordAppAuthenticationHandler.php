@@ -23,9 +23,9 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
 
     private const ERROR_SESSION_GENERATE = 'Unable to generate a new session. Please try again later.';
 
-    private const ERROR_NANCY_GATEWAY = 'Disconnect from nancy gateway. Please try again later.';
+    private const ERROR_NANCY_GATEWAY = 'Disconnect from Nancy Gateway. Please try again later.';
 
-    private const ERROR_DISCORD_GATEWAY = 'Unable to connect to discord api server. Please try again later.';
+    private const ERROR_DISCORD_GATEWAY = 'Unable to connect to Discord API server. Please try again later.';
 
     public function __construct(TemplateRendererInterface $templateRenderer, NancyGateway $nancyGateway, UrlHelper $urlHelper)
     {
@@ -112,7 +112,8 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
 
                 // Redirect to next route >
             } catch (\Exception $ex) {
-                return $this->onError(self::ERROR_DISCORD_GATEWAY);
+                $test = $this->get['code'];
+                return $this->onError(self::ERROR_DISCORD_GATEWAY . " > $test");
             }
         }
 
