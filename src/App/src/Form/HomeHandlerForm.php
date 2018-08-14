@@ -4,30 +4,24 @@ namespace App\Form;
 
 use App\TheDialgaTeam\Discord\Table\DiscordAppTable;
 use Zend\Expressive\Csrf\SessionCsrfGuard;
+use Zend\Expressive\Session\SessionInterface;
 use Zend\Form\Element;
-use Zend\Form\Form;
 
 /**
  * Class HomeHandlerForm
  * @package App\Form
  */
-class HomeHandlerForm extends Form
+class HomeHandlerForm extends CsrfGuardedForm
 {
-    /**
-     * @var SessionCsrfGuard
-     */
-    private $guard;
-
     /**
      * HomeHandlerForm constructor.
      * @param SessionCsrfGuard $guard
+     * @param SessionInterface $session
      * @param DiscordAppTable[] $discordAppTables
      */
-    public function __construct(SessionCsrfGuard $guard, $discordAppTables = array())
+    public function __construct(SessionCsrfGuard $guard, SessionInterface $session, $discordAppTables = array())
     {
-        parent::__construct();
-
-        $this->guard = $guard;
+        parent::__construct($guard, $session);
 
         $clientIdOptions = array();
 
@@ -93,33 +87,5 @@ class HomeHandlerForm extends Form
                 'value' => 'discordAppAuthentication'
             ]
         ]);
-
-        $this->add([
-            'name' => 'csrf',
-            'type' => Element\Hidden::class
-        ]);
-    }
-
-    public function getInputFilterSpecification()
-    {
-        return [
-            [
-                'name' => 'csrf',
-                'required' => true,
-                'validators' => [
-                    [
-                        'name' => 'callback',
-                        'options' => [
-                            'callback' => function ($value) {
-                                return $this->guard->validateToken($value);
-                            },
-                            'messages' => [
-                                'callbackValue' => 'The form submitted did not originate from the expected site'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
     }
 }

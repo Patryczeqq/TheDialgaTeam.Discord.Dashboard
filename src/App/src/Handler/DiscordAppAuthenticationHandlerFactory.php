@@ -11,10 +11,10 @@ class DiscordAppAuthenticationHandlerFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $urlHelper = $container->get(UrlHelper::class);
         $templateRenderer = $container->get(TemplateRendererInterface::class);
         $nancyGateway = $container->get(NancyGateway::class);
+        $urlHelper = $container->get(UrlHelper::class);
 
-        return new DiscordAppAuthenticationHandler($urlHelper, $templateRenderer, $nancyGateway);
+        return new DiscordAppAuthenticationHandler($templateRenderer, $nancyGateway, $urlHelper);
     }
 }

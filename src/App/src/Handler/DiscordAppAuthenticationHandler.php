@@ -2,147 +2,116 @@
 
 namespace App\Handler;
 
-use App\Form\DiscordAppAuthenticationHandlerForm;
+use App\Form\CsrfGuardedForm;
 use App\Form\HomeHandlerForm;
 use App\TheDialgaTeam\Discord\NancyGateway;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Wohali\OAuth2\Client\Provider\Discord;
 use Zend\Diactoros\Response\RedirectResponse;
-use Zend\Expressive\Csrf\CsrfMiddleware;
-use Zend\Expressive\Csrf\SessionCsrfGuard;
 use Zend\Expressive\Helper\UrlHelper;
-use Zend\Expressive\Session\SessionInterface;
-use Zend\Expressive\Session\SessionMiddleware;
 use Zend\Expressive\Template\TemplateRendererInterface;
 
-class DiscordAppAuthenticationHandler implements MiddlewareInterface
+class DiscordAppAuthenticationHandler extends BaseFormHandler
 {
+    /**
+     * @var UrlHelper
+     */
     private $urlHelper;
 
-    private $templateRenderer;
+    private const ERROR_SESSION_GENERATE = 'Unable to generate a new session. Please try again later.';
 
-    private $nancyGateway;
+    private const ERROR_NANCY_GATEWAY = 'Disconnect from nancy gateway. Please try again later.';
 
-    public function __construct(UrlHelper $urlHelper, TemplateRendererInterface $templateRenderer, NancyGateway $nancyGateway)
+    private const ERROR_DISCORD_GATEWAY = 'Unable to connect to discord api server. Please try again later.';
+
+    public function __construct(TemplateRendererInterface $templateRenderer, NancyGateway $nancyGateway, UrlHelper $urlHelper)
     {
+        parent::__construct($templateRenderer, $nancyGateway);
+
         $this->urlHelper = $urlHelper;
-        $this->templateRenderer = $templateRenderer;
-        $this->nancyGateway = $nancyGateway;
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $get = $request->getQueryParams();
-        $post = $request->getParsedBody();
+        $this->preProcess($request);
 
-        $guard = $request->getAttribute(CsrfMiddleware::GUARD_ATTRIBUTE);
-
-        /** @var SessionInterface $session */
-        $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
-
-        if (isset($post['action']) && $post['action'] == 'discordAppAuthentication') {
-            try {
-                $discordAppTables = $this->nancyGateway->getDiscordAppTable();
-            } catch (\Exception $ex) {
-                $discordAppTables = array();
-            }
-
-            $form = new HomeHandlerForm($guard, $discordAppTables);
-            $form->setValidationGroup('clientId', 'csrf');
-            $form->setData($post);
+        if (isset($this->post['action']) && $this->post['action'] == 'discordAppAuthentication') {
+            // If this request is from HomeHandler form.
+            $form = new HomeHandlerForm($this->guard, $this->session, $this->nancyGateway->getDiscordAppTable());
+            $form->setData($this->post);
 
             if (!$form->isValid()) {
-                $session->unset('__csrf');
-
-                return new RedirectResponse($this->urlHelper->generate('home', [], [
-                    'error' => $form->getMessages()
-                ]));
+                return $this->onError($form->getMessages());
             }
 
             $data = $form->getData();
             $clientId = $data['clientId'];
-            $session = $session->regenerate();
+            $this->session = $this->session->regenerate();
 
-            if (!$session->isRegenerated()) {
-                return new RedirectResponse($this->urlHelper->generate('home', [], [
-                    'error' => 'Unable to create a session. Please try again later.'
-                ]));
+            if (!$this->session->isRegenerated()) {
+                return $this->onError(self::ERROR_SESSION_GENERATE);
             }
 
-            $session->set('clientId', $clientId);
+            $this->session->set('clientId', $clientId);
 
-            foreach ($discordAppTables as $discordAppTable) {
-                if ($discordAppTable->getClientId() != $clientId) {
-                    continue;
-                }
+            $discordAppTables = $this->nancyGateway->getDiscordAppTable($clientId);
 
-                $oauth2 = new Discord([
-                    'clientId' => $discordAppTable->getClientId(),
-                    'clientSecret' => $discordAppTable->getClientSecret(),
-                    'redirectUri' => $this->urlHelper->generate('discordAppAuthentication')
-                ]);
-
-                $token = $this->getToken($session, $guard);
-
-                return new RedirectResponse($oauth2->getAuthorizationUrl(['state' => $token]));
+            if (count($discordAppTables) == 0) {
+                return $this->onError(self::ERROR_NANCY_GATEWAY);
             }
+
+            $discordOAuth2 = new Discord([
+                'clientId' => $discordAppTables[0]->getClientId(),
+                'clientSecret' => $discordAppTables[0]->getClientSecret(),
+                'redirectUri' => $this->urlHelper->generate('discordAppAuthentication')
+            ]);
+
+            return new RedirectResponse($discordOAuth2->getAuthorizationUrl(['state' => $this->getCsrfToken()]));
         }
 
-        if (isset($get['code']) && isset($get['state'])) {
-            $form = new DiscordAppAuthenticationHandlerForm($guard);
-            $form->setData(['csrf' => $get['state']]);
+        if (isset($this->get['code']) && isset($this->get['state'])) {
+            // If this request is from Discord OAuth2.
+            $form = new CsrfGuardedForm($this->guard, $this->session);
+            $form->setData(['csrf' => $this->get['state']]);
 
             if (!$form->isValid()) {
-                $session->unset('__csrf');
-
-                return new RedirectResponse($this->urlHelper->generate('home', [], [
-                    'error' => $form->getMessages()
-                ]));
+                return $this->onError($form->getMessages());
             }
 
-            $clientId = $session->get('clientId');
+            $clientId = $this->session->get('clientId');
+            $discordAppTables = $this->nancyGateway->getDiscordAppTable($clientId);
+
+            if (count($discordAppTables) == 0)
+                return $this->onError(self::ERROR_NANCY_GATEWAY);
+
+            $discordOAuth2 = new Discord([
+                'clientId' => $discordAppTables[0]->getClientId(),
+                'clientSecret' => $discordAppTables[0]->getClientSecret(),
+                'redirectUri' => $this->urlHelper->generate('discordAppAuthentication')
+            ]);
 
             try {
-                $discordAppTables = $this->nancyGateway->getDiscordAppTable($clientId);
+                $token = $discordOAuth2->getAccessToken('authorization_code', [
+                    'code' => $this->get['code']
+                ]);
+
+                $this->session->set('discord_oauth2', $token->jsonSerialize());
+
+                // Redirect to next route >
             } catch (\Exception $ex) {
-                $discordAppTables = array();
-            }
-
-            foreach ($discordAppTables as $discordAppTable) {
-                if ($discordAppTable->getClientId() != $clientId) {
-                    continue;
-                }
-
-                $oauth2 = new Discord([
-                    'clientId' => $discordAppTable->getClientId(),
-                    'clientSecret' => $discordAppTable->getClientSecret(),
-                    'redirectUri' => $this->urlHelper->generate('discordAppAuthentication')
-                ]);
-
-                $token = $oauth2->getAccessToken('authorization_code', [
-                    'code' => $get['code']
-                ]);
-
-                $session->set('discord_oauth2', $token->jsonSerialize());
-
-                // Do something? Route to dashboard :)
+                return $this->onError(self::ERROR_DISCORD_GATEWAY);
             }
         }
 
-        return new RedirectResponse($this->urlHelper->generate('home', [], [
-            'error' => 'Malformed or Invalid request have been made.'
-        ]));
+        return $this->onError('Malformed or Invalid request have been made.');
     }
 
-    private function getToken(SessionInterface $session, SessionCsrfGuard $guard)
+    private function onError($error)
     {
-        if (!$session->has('__csrf')) {
-            return $guard->generateToken();
-        }
-
-        return $session->get('__csrf');
+        return new RedirectResponse($this->urlHelper->generate('home', [], [
+            'error' => $error
+        ]));
     }
 }

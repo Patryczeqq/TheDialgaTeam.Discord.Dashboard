@@ -27,13 +27,20 @@ class NancyGateway
     private $port;
 
     /**
+     * Nancy gateway error handling.
+     * @var bool
+     */
+    private $throwExceptionOnError;
+
+    /**
      * NancyGateway constructor.
      * @param array $config Nancy gateway options.
      */
     public function __construct($config)
     {
-        $this->url = 'http://127.0.0.1';
-        $this->port = 5000;
+        $this->url = $config['url'];
+        $this->port = $config['port'];
+        $this->throwExceptionOnError = $config['throwExceptionOnError'];
     }
 
     /**
@@ -59,16 +66,33 @@ class NancyGateway
      */
     private function getResponseFromServer($route)
     {
-        $client = new Client();
+        if ($this->throwExceptionOnError) {
+            $client = new Client();
 
-        $request = new Request();
-        $request->setUri($this->generateAPIUrl($route));
-        $request->setMethod(Request::METHOD_GET);
+            $request = new Request();
+            $request->setUri($this->generateAPIUrl($route));
+            $request->setMethod(Request::METHOD_GET);
 
-        $response = $client->send($request);
-        $json = $response->getBody();
+            $response = $client->send($request);
+            $json = $response->getBody();
 
-        return Json::decode($json, Json::TYPE_ARRAY);
+            return Json::decode($json, Json::TYPE_ARRAY);
+        } else {
+            try {
+                $client = new Client();
+
+                $request = new Request();
+                $request->setUri($this->generateAPIUrl($route));
+                $request->setMethod(Request::METHOD_GET);
+
+                $response = $client->send($request);
+                $json = $response->getBody();
+
+                return Json::decode($json, Json::TYPE_ARRAY);
+            } catch (\Exception $ex) {
+                return array();
+            }
+        }
     }
 
     /**

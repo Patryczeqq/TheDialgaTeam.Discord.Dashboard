@@ -10,9 +10,9 @@ class HomeHandlerFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        $renderer = $container->get(TemplateRendererInterface::class);
+        $templateRenderer = $container->get(TemplateRendererInterface::class);
         $nancyGateway = $container->get(NancyGateway::class);
 
-        return new HomeHandler($renderer, $nancyGateway);
+        return new HomeHandler($templateRenderer, $nancyGateway);
     }
 }

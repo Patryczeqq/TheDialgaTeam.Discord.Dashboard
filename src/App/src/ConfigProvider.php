@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Form\Element\Csrf;
 use App\TheDialgaTeam\Discord\NancyGateway;
 use App\TheDialgaTeam\Discord\NancyGatewayFactory;
+use Zend\ServiceManager\Factory\InvokableFactory;
 
 /**
  * The configuration provider for the App module
@@ -36,9 +38,8 @@ class ConfigProvider
     public function getDependencies(): array
     {
         return [
-            'invokables' => [
-            ],
             'factories' => [
+                Csrf::class => InvokableFactory::class,
                 NancyGateway::class => NancyGatewayFactory::class,
                 Handler\HomeHandler::class => Handler\HomeHandlerFactory::class,
                 Handler\DiscordAppAuthenticationHandler::class => Handler\DiscordAppAuthenticationHandlerFactory::class,
@@ -65,6 +66,7 @@ class ConfigProvider
         return [
             'url' => 'http://127.0.0.1',
             'port' => '5000',
+            'throwExceptionOnError' => false,
         ];
     }
 }
