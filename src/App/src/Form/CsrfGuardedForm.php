@@ -27,8 +27,9 @@ class CsrfGuardedForm extends Form
      * CsrfGuardedForm constructor.
      * @param SessionCsrfGuard $guard
      * @param SessionInterface $session
+     * @param string $csrfKey
      */
-    public function __construct(SessionCsrfGuard $guard, SessionInterface $session)
+    public function __construct(SessionCsrfGuard $guard, SessionInterface $session, string $csrfKey = 'csrf')
     {
         parent::__construct();
 
@@ -36,10 +37,10 @@ class CsrfGuardedForm extends Form
         $this->session = $session;
 
         $this->add([
-            'name' => 'csrf',
+            'name' => $csrfKey,
             'type' => Csrf::class,
             'attributes' => [
-                'value' => $this->getCsrfToken()
+                'value' => $this->getCsrfToken($csrfKey)
             ],
             'options' => [
                 'session_guard' => $guard
@@ -47,12 +48,12 @@ class CsrfGuardedForm extends Form
         ]);
     }
 
-    private function getCsrfToken()
+    private function getCsrfToken(string $csrfKey)
     {
-        if (!$this->session->has('__csrf')) {
-            return $this->guard->generateToken();
+        if (!$this->session->has($csrfKey)) {
+            return $this->guard->generateToken($csrfKey);
         }
 
-        return $this->session->get('__csrf');
+        return $this->session->get($csrfKey);
     }
 }

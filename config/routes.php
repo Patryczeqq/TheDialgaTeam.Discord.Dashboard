@@ -36,6 +36,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->get('/', [
         Zend\Expressive\Session\SessionMiddleware::class,
         Zend\Expressive\Csrf\CsrfMiddleware::class,
+        App\Middleware\SessionCheckerMiddleware::class,
         App\Handler\HomeHandler::class
     ], 'home');
 

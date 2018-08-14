@@ -40,6 +40,7 @@
     "require": {
         "php": "^7.1",
         "mtymek/blast-base-url": "^1.0",
+        "restcord/restcord": "^0.3.0",
         "wohali/oauth2-discord-new": "^1.0",
         "zendframework/zend-code": "^3.3",
         "zendframework/zend-component-installer": "^2.1.1",

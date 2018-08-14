@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Handler;
+namespace App\Middleware;
 
 use App\TheDialgaTeam\Discord\NancyGateway;
 use Psr\Container\ContainerInterface;
@@ -8,7 +8,7 @@ use Zend\Expressive\Helper\ServerUrlHelper;
 use Zend\Expressive\Helper\UrlHelper;
 use Zend\Expressive\Template\TemplateRendererInterface;
 
-class DiscordAppAuthenticationHandlerFactory
+class SessionCheckerMiddlewareFactory
 {
     public function __invoke(ContainerInterface $container)
     {
@@ -17,6 +17,6 @@ class DiscordAppAuthenticationHandlerFactory
         $serverUrlHelper = $container->get(ServerUrlHelper::class);
         $urlHelper = $container->get(UrlHelper::class);
 
-        return new DiscordAppAuthenticationHandler($templateRenderer, $nancyGateway, $serverUrlHelper, $urlHelper);
+        return new SessionCheckerMiddleware($templateRenderer, $nancyGateway, $serverUrlHelper, $urlHelper);
     }
 }

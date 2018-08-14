@@ -5,23 +5,25 @@ namespace App\Form;
 use App\TheDialgaTeam\Discord\Table\DiscordAppTable;
 use Zend\Expressive\Csrf\SessionCsrfGuard;
 use Zend\Expressive\Session\SessionInterface;
-use Zend\Form\Element;
+use Zend\Form\Element\Button;
+use Zend\Form\Element\Hidden;
+use Zend\Form\Element\Select;
 
 /**
- * Class HomeHandlerForm
+ * Class BotSelectionForm
  * @package App\Form
  */
-class HomeHandlerForm extends CsrfGuardedForm
+class BotSelectionForm extends CsrfGuardedForm
 {
     /**
-     * HomeHandlerForm constructor.
+     * BotSelectionForm constructor.
      * @param SessionCsrfGuard $guard
      * @param SessionInterface $session
      * @param DiscordAppTable[] $discordAppTables
      */
     public function __construct(SessionCsrfGuard $guard, SessionInterface $session, $discordAppTables = array())
     {
-        parent::__construct($guard, $session);
+        parent::__construct($guard, $session, 'csrf_bot_selection_form');
 
         $clientIdOptions = array();
 
@@ -32,7 +34,7 @@ class HomeHandlerForm extends CsrfGuardedForm
         if (count($clientIdOptions) == 0) {
             $this->add([
                 'name' => 'clientId',
-                'type' => Element\Select::class,
+                'type' => Select::class,
                 'attributes' => [
                     'class' => 'custom-select'
                 ],
@@ -43,7 +45,7 @@ class HomeHandlerForm extends CsrfGuardedForm
 
             $this->add([
                 'name' => 'login',
-                'type' => Element\Button::class,
+                'type' => Button::class,
                 'attributes' => [
                     'class' => 'btn btn-primary',
                     'style' => 'color: white',
@@ -57,7 +59,7 @@ class HomeHandlerForm extends CsrfGuardedForm
         } else {
             $this->add([
                 'name' => 'clientId',
-                'type' => Element\Select::class,
+                'type' => Select::class,
                 'attributes' => [
                     'class' => 'custom-select'
                 ],
@@ -68,7 +70,7 @@ class HomeHandlerForm extends CsrfGuardedForm
 
             $this->add([
                 'name' => 'login',
-                'type' => Element\Button::class,
+                'type' => Button::class,
                 'attributes' => [
                     'class' => 'btn btn-primary',
                     'style' => 'color: white',
@@ -82,7 +84,7 @@ class HomeHandlerForm extends CsrfGuardedForm
 
         $this->add([
             'name' => 'action',
-            'type' => Element\Hidden::class,
+            'type' => Hidden::class,
             'attributes' => [
                 'value' => 'discordAppAuthentication'
             ]

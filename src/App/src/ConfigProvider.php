@@ -43,6 +43,7 @@ class ConfigProvider
                 NancyGateway::class => NancyGatewayFactory::class,
                 Handler\HomeHandler::class => Handler\HomeHandlerFactory::class,
                 Handler\DiscordAppAuthenticationHandler::class => Handler\DiscordAppAuthenticationHandlerFactory::class,
+                Middleware\SessionCheckerMiddleware::class => Middleware\SessionCheckerMiddlewareFactory::class,
             ],
         ];
     }

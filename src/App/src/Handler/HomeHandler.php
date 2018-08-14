@@ -2,7 +2,9 @@
 
 namespace App\Handler;
 
-use App\Form\HomeHandlerForm;
+use App\Error\Error;
+use App\Form\BotSelectionForm;
+use App\Form\GuildSelectionForm;
 use App\TheDialgaTeam\Discord\NancyGateway;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,7 +23,39 @@ class HomeHandler extends BaseFormHandler
     {
         $this->preProcess($request);
 
-        $form = new HomeHandlerForm($this->guard, $this->session, $this->nancyGateway->getDiscordAppTable());
+        // Return vars
+        $isLoggedIn = false;
+        $guildSelectionForm = null;
+        $botSelectionForm = null;
+        $selectedBotInstance = null;
+        $error = null;
+
+        if ($this->session->has('discord_oauth2')) {
+            $isLoggedIn = true;
+            $guilds = array();
+
+            try {
+                $guilds = $this->discordClient->user->getCurrentUserGuilds([]);
+            } catch (\Exception $ex) {
+                $this->session->clear();
+                $error = $ex->getMessage();
+            }
+
+            $guildSelectionForm = new GuildSelectionForm($this->guard, $this->session, $guilds);
+        }
+
+        if ($this->session->has('clientId')) {
+            $discordAppTables = $this->nancyGateway->getDiscordAppTable($this->session->get('clientId'));
+
+            if (count($discordAppTables) == 0) {
+                $this->session->clear();
+                $error = Error::ERROR_NANCY_GATEWAY;
+            }
+
+            $selectedBotInstance = $discordAppTables[0];
+        }
+
+        $botSelectionForm = new BotSelectionForm($this->guard, $this->session, $this->nancyGateway->getDiscordAppTable());
 
         if (isset($this->get['error'])) {
             if (is_array($this->get['error'])) {
@@ -29,12 +63,13 @@ class HomeHandler extends BaseFormHandler
             } else {
                 $error = $this->get['error'];
             }
-        } else {
-            $error = '';
         }
 
         return new HtmlResponse($this->templateRenderer->render('app::home', [
-            'form' => $form,
+            'isLoggedIn' => $isLoggedIn,
+            'botSelectionForm' => $botSelectionForm,
+            'guildSelectionForm' => $guildSelectionForm,
+            'selectedBotInstance' => $selectedBotInstance,
             'error' => $error
         ]));
     }

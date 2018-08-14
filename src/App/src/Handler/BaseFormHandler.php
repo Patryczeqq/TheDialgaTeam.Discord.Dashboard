@@ -3,10 +3,12 @@
 namespace App\Handler;
 
 use App\TheDialgaTeam\Discord\NancyGateway;
+use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RestCord\DiscordClient;
 use Zend\Expressive\Csrf\CsrfMiddleware;
 use Zend\Expressive\Csrf\SessionCsrfGuard;
 use Zend\Expressive\Session\SessionInterface;
@@ -28,6 +30,11 @@ abstract class BaseFormHandler implements MiddlewareInterface
      * @var NancyGateway
      */
     protected $nancyGateway;
+
+    /**
+     * @var DiscordClient
+     */
+    protected $discordClient;
 
     /**
      * @var SessionCsrfGuard
@@ -72,6 +79,15 @@ abstract class BaseFormHandler implements MiddlewareInterface
 
         $this->get = $request->getQueryParams();
         $this->post = $request->getParsedBody();
+
+        if ($this->session->has('discord_oauth2')) {
+            $accessToken = new AccessToken($this->session->get('discord_oauth2'));
+
+            $this->discordClient = new DiscordClient([
+                'tokenType' => 'OAuth',
+                'token' => $accessToken->getToken(),
+            ]);
+        }
     }
 
     protected function getCsrfToken()
