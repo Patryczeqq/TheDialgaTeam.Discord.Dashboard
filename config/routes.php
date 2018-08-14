@@ -34,21 +34,15 @@ use Zend\Expressive\MiddlewareFactory;
  */
 return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
     $app->get('/', [
-        Zend\Expressive\Session\SessionMiddleware::class,
-        Zend\Expressive\Csrf\CsrfMiddleware::class,
         App\Middleware\SessionCheckerMiddleware::class,
         App\Handler\HomeHandler::class
     ], 'home');
 
     $app->route('/discordAppAuthentication', [
-        Zend\Expressive\Session\SessionMiddleware::class,
-        Zend\Expressive\Csrf\CsrfMiddleware::class,
         App\Handler\DiscordAppAuthenticationHandler::class
     ], ['GET', 'POST'], 'discordAppAuthentication');
 
     $app->get('/logout', [
-        Zend\Expressive\Session\SessionMiddleware::class,
-        Zend\Expressive\Csrf\CsrfMiddleware::class,
         App\Handler\LogoutHandler::class
     ], 'logout');
 };
