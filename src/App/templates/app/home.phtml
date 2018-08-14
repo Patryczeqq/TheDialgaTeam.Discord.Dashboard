@@ -1,6 +1,6 @@
 <?php $this->headTitle('Home');
 
-if (isset($this->error) && !isEmpty($this->error)):
+if (isset($this->error) && !empty($this->error)):
     ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <strong>Error:</strong> <?= $this->error ?>
