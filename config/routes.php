@@ -45,4 +45,10 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
         Zend\Expressive\Csrf\CsrfMiddleware::class,
         App\Handler\DiscordAppAuthenticationHandler::class
     ], ['GET', 'POST'], 'discordAppAuthentication');
+
+    $app->get('/logout', [
+        Zend\Expressive\Session\SessionMiddleware::class,
+        Zend\Expressive\Csrf\CsrfMiddleware::class,
+        App\Handler\LogoutHandler::class
+    ]);
 };
