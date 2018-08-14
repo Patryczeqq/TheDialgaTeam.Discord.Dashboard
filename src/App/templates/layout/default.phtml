@@ -62,7 +62,7 @@ $this->inlineScript()
                                 <img src="<?php
                                 /** @var \RestCord\Model\User\User $user */
                                 $user = $this->user;
-                                echo \RestCord\Constants::AVATAR_URL . $user->avatar;
+                                echo $user->getAvatar();
                                 ?>" height="32"/>
                             </a>
                         </li>
