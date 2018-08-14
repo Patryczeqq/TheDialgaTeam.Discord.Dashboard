@@ -112,8 +112,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
 
                 // Redirect to next route >
             } catch (\Exception $ex) {
-                $test = $ex->getMessage();
-                return $this->onError(self::ERROR_DISCORD_GATEWAY . $test);
+                return $this->onError(self::ERROR_DISCORD_GATEWAY);
             }
         }
 
