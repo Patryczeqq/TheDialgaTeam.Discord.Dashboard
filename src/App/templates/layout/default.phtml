@@ -59,11 +59,19 @@ $this->inlineScript()
                     <ul class="navbar-nav ml-auto" id="navbarCollapse">
                         <li class="nav-item">
                             <a class="nav-link" href="<?= $this->url('home') ?>">
-                                <img src="<?= $this->basePath('img/logo.png') ?>" height="32"/>
+                                <img src="<?php
+                                /** @var \RestCord\Model\User\User $user */
+                                $user = $this->user;
+                                echo $user->avatar;
+                                ?>" height="32"/>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= $this->url('home') ?>">jianmingyong</a>
+                            <a class="nav-link" href="<?= $this->url('home') ?>"><?php
+                                /** @var \RestCord\Model\User\User $user */
+                                $user = $this->user;
+                                echo $user->username;
+                                ?></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<?= $this->url('home') ?>">Logout</a>

@@ -28,6 +28,7 @@ class HomeHandler extends BaseFormHandler
         $guildSelectionForm = null;
         $botSelectionForm = null;
         $selectedBotInstance = null;
+        $user = null;
         $error = null;
 
         if ($this->session->has('discord_oauth2')) {
@@ -42,6 +43,7 @@ class HomeHandler extends BaseFormHandler
             }
 
             $guildSelectionForm = new GuildSelectionForm($this->guard, $this->session, $guilds);
+            $user = $this->discordClient->user->getCurrentUser([]);
         }
 
         if ($this->session->has('clientId')) {
@@ -65,8 +67,10 @@ class HomeHandler extends BaseFormHandler
             }
         }
 
+        $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'isLoggedIn', $isLoggedIn);
+        $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'user', $user);
+
         return new HtmlResponse($this->templateRenderer->render('app::home', [
-            'isLoggedIn' => $isLoggedIn,
             'botSelectionForm' => $botSelectionForm,
             'guildSelectionForm' => $guildSelectionForm,
             'selectedBotInstance' => $selectedBotInstance,
