@@ -23,8 +23,19 @@ class HomeHandler extends BaseFormHandler
 
         $form = new HomeHandlerForm($this->guard, $this->session, $this->nancyGateway->getDiscordAppTable());
 
+        if (isset($this->get['error'])) {
+            if (is_array($this->get['error'])) {
+                $error = join('\n', $this->get['error']);
+            } else {
+                $error = $this->get['error'];
+            }
+        } else {
+            $error = '';
+        }
+
         return new HtmlResponse($this->templateRenderer->render('app::home', [
-            'form' => $form
+            'form' => $form,
+            'error' => $error
         ]));
     }
 }
