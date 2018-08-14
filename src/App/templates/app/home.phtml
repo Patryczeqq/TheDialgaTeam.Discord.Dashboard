@@ -20,18 +20,25 @@
                 <div class="message-header">Manage Server</div>
                 <div class="message-body">
                     <p>Selected Bot Instance:</p>
-                    <p><?php
+                    <p>
+                        <?php
                         /** @var \App\TheDialgaTeam\Discord\Table\DiscordAppTable $selectedBotInstance */
                         $selectedBotInstance = $this->selectedBotInstance;
-                        echo $selectedBotInstance->getAppName();
-                        ?></p>
+
+                        if ($selectedBotInstance != null) {
+                            echo $selectedBotInstance->getAppName();
+                        }
+                        ?>
+                    </p>
                     <div class="input-group mb-3">
                         <?php
                         /** @var \App\Form\GuildSelectionForm $guildSelectionForm */
                         $guildSelectionForm = $this->guildSelectionForm;
-                        $guildSelectionForm->prepare();
 
-                        echo $this->formRow($guildSelectionForm->get('guildId'));
+                        if ($guildSelectionForm != null) {
+                            $guildSelectionForm->prepare();
+                            echo $this->formRow($guildSelectionForm->get('guildId'));
+                        }
                         ?>
                     </div>
                 </div>
