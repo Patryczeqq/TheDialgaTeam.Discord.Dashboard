@@ -72,7 +72,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
             $discordOAuth2 = new Discord([
                 'clientId' => $discordAppTables[0]->getClientId(),
                 'clientSecret' => $discordAppTables[0]->getClientSecret(),
-                'redirectUri' => $this->urlHelper->generate('discordAppAuthentication')
+                'redirectUri' => $request->getUri()->getHost() . $this->urlHelper->generate('discordAppAuthentication')
             ]);
 
             return new RedirectResponse($discordOAuth2->getAuthorizationUrl(['state' => $this->getCsrfToken()]));
@@ -97,7 +97,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
             $discordOAuth2 = new Discord([
                 'clientId' => $discordAppTables[0]->getClientId(),
                 'clientSecret' => $discordAppTables[0]->getClientSecret(),
-                'redirectUri' => $this->urlHelper->generate('discordAppAuthentication')
+                'redirectUri' => $request->getUri()->getHost() . $this->urlHelper->generate('discordAppAuthentication')
             ]);
 
             try {
@@ -128,7 +128,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
                 $discordOAuth2 = new Discord([
                     'clientId' => $discordAppTables[0]->getClientId(),
                     'clientSecret' => $discordAppTables[0]->getClientSecret(),
-                    'redirectUri' => $this->urlHelper->generate('discordAppAuthentication')
+                    'redirectUri' => $request->getUri()->getHost() . $this->urlHelper->generate('discordAppAuthentication')
                 ]);
 
                 try {
