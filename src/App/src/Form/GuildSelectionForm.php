@@ -48,7 +48,7 @@ class GuildSelectionForm extends CsrfGuardedForm
                 'name' => 'guildId',
                 'type' => Select::class,
                 'attributes' => [
-                    'class' => 'custom-select'
+                    'class' => 'custom-select guildId'
                 ],
                 'options' => [
                     'value_options' => $guildIdOptions
