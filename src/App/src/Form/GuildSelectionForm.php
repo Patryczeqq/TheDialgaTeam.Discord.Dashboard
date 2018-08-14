@@ -51,6 +51,7 @@ class GuildSelectionForm extends CsrfGuardedForm
                     'class' => 'custom-select guildId'
                 ],
                 'options' => [
+                    'empty_option' => 'Select Server',
                     'value_options' => $guildIdOptions
                 ]
             ]);
