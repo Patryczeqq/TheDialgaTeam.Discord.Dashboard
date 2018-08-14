@@ -75,7 +75,10 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
                 'redirectUri' => 'https://' . $request->getUri()->getHost() . $this->urlHelper->generate('discordAppAuthentication')
             ]);
 
-            return new RedirectResponse($discordOAuth2->getAuthorizationUrl(['state' => $this->getCsrfToken()]));
+            return new RedirectResponse($discordOAuth2->getAuthorizationUrl([
+                'state' => $this->getCsrfToken(),
+                'scope' => ['identify', 'guilds', 'guilds.join']
+            ]));
         }
 
         if (isset($this->get['code']) && isset($this->get['state'])) {
