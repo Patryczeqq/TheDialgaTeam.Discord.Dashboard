@@ -52,9 +52,9 @@ class HomeHandler extends BaseFormHandler
             if (count($discordAppTables) == 0) {
                 $this->session->clear();
                 $error = Error::ERROR_NANCY_GATEWAY;
+            } else {
+                $selectedBotInstance = $discordAppTables[0];
             }
-
-            $selectedBotInstance = $discordAppTables[0];
         }
 
         $botSelectionForm = new BotSelectionForm($this->guard, $this->session, $this->nancyGateway->getDiscordAppTable());
