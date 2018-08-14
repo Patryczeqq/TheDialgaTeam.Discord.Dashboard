@@ -26,6 +26,8 @@ class LogoutHandler extends BaseFormHandler
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $this->preProcess($request);
+
         $this->session->clear();
         return new RedirectResponse($this->urlHelper->generate('home'));
     }
