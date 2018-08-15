@@ -58,6 +58,19 @@ $this->inlineScript()
                 <?php if ($this->isLoggedIn): ?>
                     <ul class="navbar-nav ml-auto" id="navbarCollapse">
                         <li class="nav-item">
+                            <div class="input-group mb-3">
+                                <?php
+                                /** @var \App\Form\GuildSelectionForm $guildSelectionForm */
+                                $guildSelectionForm = $this->guildSelectionForm;
+
+                                if ($guildSelectionForm != null) {
+                                    $guildSelectionForm->prepare();
+                                    echo $this->formRow($guildSelectionForm->get('guildId'));
+                                }
+                                ?>
+                            </div>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="<?= $this->url('home') ?>">
                                 <img src="<?php
                                 /** @var \RestCord\Model\User\User $user */
