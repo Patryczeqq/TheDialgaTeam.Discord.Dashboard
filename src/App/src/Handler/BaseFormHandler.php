@@ -197,7 +197,9 @@ abstract class BaseFormHandler implements MiddlewareInterface
         $error = array();
 
         foreach ($form->getMessages() as $key => $value) {
-            $error[] = sprintf('%s: %s', $key, $value);
+            foreach ($value as $key2 => $value2) {
+                $error[] = sprintf('%s: %s', $key2, $value2);
+            }
         }
 
         throw new \Exception(join(' ', $error));
