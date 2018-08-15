@@ -2,6 +2,7 @@
 
 namespace App\Handler;
 
+use App\Constant\Session;
 use App\Form\GuildSelectionForm;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
