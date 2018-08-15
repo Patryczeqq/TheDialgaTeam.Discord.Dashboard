@@ -34,6 +34,7 @@ class DashboardHandler extends BaseFormHandler
             $guildSelectionForm = new GuildSelectionForm($this->guard, $this->session, $guilds);
         }
 
+        $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'currentPage', "Dashboard");
         $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'isLoggedIn', $isLoggedIn);
         $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'user', $user);
         $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'guildSelectionForm', $guildSelectionForm);

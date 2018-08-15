@@ -104,15 +104,15 @@ $this->inlineScript()
                 <li class="nav-item">
                     <p>Main Settings</p>
                 </li>
-                <li class="nav-item active">
+                <li class="nav-item <?= $this->currentPage == 'Dashboard' ? 'active' : '' ?>">
                     <a class="nav-link" href="/">Dashboard</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item <?= $this->currentPage == 'Module' ? 'active' : '' ?>">
                     <a class="nav-link" href="/">Module</a>
                 </li>
             </ul>
         </nav>
-        <div id="content">
+        <div class="container" id="content">
             <div class="overlay"></div>
             <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #333333">
                 <button type="button" id="sidebarCollapse" class="btn btn-info">
