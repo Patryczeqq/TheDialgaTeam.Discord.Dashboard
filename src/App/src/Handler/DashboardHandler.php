@@ -52,10 +52,10 @@ class DashboardHandler extends BaseFormHandler
         $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'isLoggedIn', $isLoggedIn);
         $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'user', $user);
         $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'guildSelectionForm', $guildSelectionForm);
+        $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'selectedGuild', $selectedGuild);
 
         return new HtmlResponse($this->templateRenderer->render('app::dashboard', [
             'layout' => 'layout::dashboard',
-            'selectedGuild' => $selectedGuild,
             'nicknameForm' => $nicknameForm,
             'commandPrefixForm' => $commandPrefixForm,
         ]));

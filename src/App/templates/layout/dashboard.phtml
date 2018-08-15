@@ -12,6 +12,9 @@ $this->inlineScript()
 /** @var RestCord\Model\User\User $user */
 $user = $this->user;
 
+/** @var RestCord\Model\Guild\Guild $selectedGuild */
+$selectedGuild = $this->selectedGuild;
+
 /** @var App\Form\GuildSelectionForm $guildSelectionForm */
 $guildSelectionForm = $this->guildSelectionForm;
 $guildSelectionForm->prepare();
@@ -97,10 +100,11 @@ $guildSelectionForm->prepare();
                     <p>Main Settings</p>
                 </li>
                 <li class="nav-item <?= $this->currentPage == 'Dashboard' ? 'active' : '' ?>">
-                    <a class="nav-link" href="/">Dashboard</a>
+                    <a class="nav-link" href="<?= $this->url('dashboard', ['guildId' => $selectedGuild->id]) ?>">Dashboard</a>
                 </li>
                 <li class="nav-item <?= $this->currentPage == 'Module' ? 'active' : '' ?>">
-                    <a class="nav-link" href="/">Module</a>
+                    <a class="nav-link"
+                       href="<?= $this->url('dashboard', ['guildId' => $selectedGuild->id]) ?>">Module</a>
                 </li>
             </ul>
         </nav>
