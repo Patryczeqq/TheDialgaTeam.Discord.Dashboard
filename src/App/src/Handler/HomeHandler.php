@@ -59,11 +59,10 @@ class HomeHandler extends BaseFormHandler
         $botSelectionForm = new BotSelectionForm($this->guard, $this->session, $discordAppTables);
 
         if (isset($this->get['error'])) {
-            if (is_array($this->get['error'])) {
+            if (is_array($this->get['error']))
                 $error = join('\n', $this->get['error']);
-            } else {
+            else
                 $error = $this->get['error'];
-            }
         }
 
         $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'isLoggedIn', $isLoggedIn);

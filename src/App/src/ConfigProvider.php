@@ -6,6 +6,7 @@ namespace App;
 
 use App\Form\Element\Csrf;
 use App\Handler\BaseFormHandlerFactory;
+use App\Handler\DashboardHandler;
 use App\Handler\DiscordAppAuthenticationHandler;
 use App\Handler\HomeHandler;
 use App\Handler\LogoutHandler;
@@ -50,6 +51,7 @@ class ConfigProvider
                 HomeHandler::class => BaseFormHandlerFactory::class,
                 DiscordAppAuthenticationHandler::class => BaseFormHandlerFactory::class,
                 LogoutHandler::class => BaseFormHandlerFactory::class,
+                DashboardHandler::class => BaseFormHandlerFactory::class,
 
                 // Nancy Gateway
                 NancyGateway::class => NancyGatewayFactory::class,
