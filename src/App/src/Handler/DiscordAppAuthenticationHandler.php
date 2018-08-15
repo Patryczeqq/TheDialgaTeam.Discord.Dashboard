@@ -52,6 +52,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
 
         if (isset($this->get['code']) && isset($this->get['state'])) {
             // If this request is from Discord OAuth2.
+            $this->session->set('state', $this->get['state']);
             $csrfGuardedForm = new CsrfGuardedForm($this->guard, $this->session, 'state');
             $csrfGuardedForm->setData($this->get);
 
