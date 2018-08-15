@@ -95,6 +95,6 @@
         "development-status": "zf-development-mode status",
         "expressive": "expressive --ansi",
         "clear-config-cache": "php bin/clear-config-cache.php",
-        "serve": "php -S 0.0.0.0:8080 -t public/",
+      "serve": "php -S 0.0.0.0:8080 -t public/"
     }
 }
