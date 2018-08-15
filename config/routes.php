@@ -34,7 +34,6 @@ use Zend\Expressive\MiddlewareFactory;
  */
 return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
     $app->get('/', [
-        App\Middleware\SessionCheckerMiddleware::class,
         App\Handler\HomeHandler::class
     ], 'home');
 

@@ -5,14 +5,10 @@ declare(strict_types=1);
 namespace App;
 
 use App\Form\Element\Csrf;
+use App\Handler\BaseFormHandlerFactory;
 use App\Handler\DiscordAppAuthenticationHandler;
-use App\Handler\DiscordAppAuthenticationHandlerFactory;
 use App\Handler\HomeHandler;
-use App\Handler\HomeHandlerFactory;
 use App\Handler\LogoutHandler;
-use App\Handler\LogoutHandlerFactory;
-use App\Middleware\SessionCheckerMiddleware;
-use App\Middleware\SessionCheckerMiddlewareFactory;
 use App\TheDialgaTeam\Discord\NancyGateway;
 use App\TheDialgaTeam\Discord\NancyGatewayFactory;
 use Zend\ServiceManager\Factory\InvokableFactory;
@@ -51,12 +47,9 @@ class ConfigProvider
                 Csrf::class => InvokableFactory::class,
 
                 // Handler
-                HomeHandler::class => HomeHandlerFactory::class,
-                DiscordAppAuthenticationHandler::class => DiscordAppAuthenticationHandlerFactory::class,
-                LogoutHandler::class => LogoutHandlerFactory::class,
-
-                // Middleware
-                SessionCheckerMiddleware::class => SessionCheckerMiddlewareFactory::class,
+                HomeHandler::class => BaseFormHandlerFactory::class,
+                DiscordAppAuthenticationHandler::class => BaseFormHandlerFactory::class,
+                LogoutHandler::class => BaseFormHandlerFactory::class,
 
                 // Nancy Gateway
                 NancyGateway::class => NancyGatewayFactory::class,
@@ -83,7 +76,6 @@ class ConfigProvider
         return [
             'url' => 'http://127.0.0.1',
             'port' => '5000',
-            'throwExceptionOnError' => false,
         ];
     }
 }

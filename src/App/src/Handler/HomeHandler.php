@@ -2,10 +2,9 @@
 
 namespace App\Handler;
 
-use App\Error\Error;
+use App\Constant\Session;
 use App\Form\BotSelectionForm;
 use App\Form\GuildSelectionForm;
-use App\TheDialgaTeam\Discord\NancyGateway;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -14,15 +13,8 @@ use Zend\Expressive\Template\TemplateRendererInterface;
 
 class HomeHandler extends BaseFormHandler
 {
-    public function __construct(TemplateRendererInterface $templateRenderer, NancyGateway $nancyGateway)
+    protected function onProcess(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        parent::__construct($templateRenderer, $nancyGateway);
-    }
-
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
-        $this->preProcess($request);
-
         // Return vars
         $isLoggedIn = false;
         $guildSelectionForm = null;
@@ -31,33 +23,40 @@ class HomeHandler extends BaseFormHandler
         $user = null;
         $error = null;
 
-        if ($this->session->has('discord_oauth2')) {
+        if ($this->session->has(Session::DISCORD_OAUTH2_ACCESS_TOKEN)) {
             $isLoggedIn = true;
             $guilds = array();
 
             try {
-                $guilds = $this->discordClient->user->getCurrentUserGuilds([]);
+                $guilds = $this->getDiscordClient()->user->getCurrentUserGuilds(array());
+                $user = $this->getDiscordClient()->user->getCurrentUser(array());
             } catch (\Exception $ex) {
                 $this->session->clear();
                 $error = $ex->getMessage();
             }
 
             $guildSelectionForm = new GuildSelectionForm($this->guard, $this->session, $guilds);
-            $user = $this->discordClient->user->getCurrentUser([]);
         }
 
-        if ($this->session->has('clientId')) {
-            $discordAppTables = $this->nancyGateway->getDiscordAppTable($this->session->get('clientId'));
+        try {
+            $discordAppTables = $this->nancyGateway->getDiscordAppTable();
+        } catch (\Exception $ex) {
+            $discordAppTables = array();
+            $this->session->clear();
+            $error = $ex->getMessage();
+        }
 
-            if (count($discordAppTables) == 0) {
-                $this->session->clear();
-                $error = Error::ERROR_NANCY_GATEWAY;
-            } else {
-                $selectedBotInstance = $discordAppTables[0];
+        if ($this->session->has(Session::CLIENT_ID)) {
+            foreach ($discordAppTables as $discordAppTable) {
+                if ($discordAppTable->getClientId() != $this->session->get(Session::CLIENT_ID))
+                    continue;
+
+                $selectedBotInstance = $discordAppTable;
+                break;
             }
         }
 
-        $botSelectionForm = new BotSelectionForm($this->guard, $this->session, $this->nancyGateway->getDiscordAppTable());
+        $botSelectionForm = new BotSelectionForm($this->guard, $this->session, $discordAppTables);
 
         if (isset($this->get['error'])) {
             if (is_array($this->get['error'])) {

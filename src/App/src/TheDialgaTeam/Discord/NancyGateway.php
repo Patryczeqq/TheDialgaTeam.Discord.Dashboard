@@ -2,6 +2,7 @@
 
 namespace App\TheDialgaTeam\Discord;
 
+use App\Constant\Error;
 use App\TheDialgaTeam\Discord\Table\DiscordAppTable;
 use Zend\Http\Client;
 use Zend\Http\Request;
@@ -27,12 +28,6 @@ class NancyGateway
     private $port;
 
     /**
-     * Nancy gateway error handling.
-     * @var bool
-     */
-    private $throwExceptionOnError;
-
-    /**
      * NancyGateway constructor.
      * @param array $config Nancy gateway options.
      */
@@ -40,12 +35,12 @@ class NancyGateway
     {
         $this->url = $config['url'];
         $this->port = $config['port'];
-        $this->throwExceptionOnError = $config['throwExceptionOnError'];
     }
 
     /**
      * @param null|string $clientId
      * @return array|DiscordAppTable[]
+     * @throws \Exception
      */
     public function getDiscordAppTable($clientId = null)
     {
@@ -63,10 +58,11 @@ class NancyGateway
     /**
      * @param string $route
      * @return array
+     * @throws \Exception
      */
     private function getResponseFromServer($route)
     {
-        if ($this->throwExceptionOnError) {
+        try {
             $client = new Client();
 
             $request = new Request();
@@ -77,21 +73,8 @@ class NancyGateway
             $json = $response->getBody();
 
             return Json::decode($json, Json::TYPE_ARRAY);
-        } else {
-            try {
-                $client = new Client();
-
-                $request = new Request();
-                $request->setUri($this->generateAPIUrl($route));
-                $request->setMethod(Request::METHOD_GET);
-
-                $response = $client->send($request);
-                $json = $response->getBody();
-
-                return Json::decode($json, Json::TYPE_ARRAY);
-            } catch (\Exception $ex) {
-                return array();
-            }
+        } catch (\Exception $ex) {
+            throw new \Exception(Error::ERROR_NANCY_GATEWAY);
         }
     }
 

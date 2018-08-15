@@ -5,3 +5,4 @@ clover.xml
 coveralls-upload.json
 phpunit.xml
 vendor
+jquery-3.3.1.js
