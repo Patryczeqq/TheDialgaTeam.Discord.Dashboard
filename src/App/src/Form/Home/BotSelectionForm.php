@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Form;
+namespace App\Form\Home;
 
+use App\Form\CsrfGuardedForm;
 use App\TheDialgaTeam\Discord\Table\DiscordAppTable;
 use Zend\Expressive\Csrf\SessionCsrfGuard;
 use Zend\Expressive\Session\SessionInterface;
@@ -11,7 +12,7 @@ use Zend\Form\Element\Select;
 
 /**
  * Class BotSelectionForm
- * @package App\Form
+ * @package App\Form\Home
  */
 class BotSelectionForm extends CsrfGuardedForm
 {

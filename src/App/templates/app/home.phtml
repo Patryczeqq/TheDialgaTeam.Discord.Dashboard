@@ -1,4 +1,24 @@
-<?php $this->headTitle('Home'); ?>
+<?php
+$this->headTitle('Home');
+
+/** @var App\TheDialgaTeam\Discord\Table\DiscordAppTable $selectedBotInstance */
+$selectedBotInstance = $this->selectedBotInstance;
+
+/** @var App\Form\GuildSelectionForm $guildSelectionForm */
+$guildSelectionForm = $this->guildSelectionForm;
+
+if (isset($guildSelectionForm))
+    $guildSelectionForm->prepare();
+
+/** @var \Zend\Form\Form $botSelectionForm */
+$botSelectionForm = $this->botSelectionForm;
+$botSelectionForm->setAttributes([
+    'action' => $this->url('discordAppAuthentication'),
+    'method' => 'post'
+]);
+$botSelectionForm->prepare();
+?>
+
 <?php if (!empty($this->error)): ?>
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         <strong>Error:</strong> <?= $this->error ?>
@@ -20,25 +40,11 @@
                 <div class="message-header">Manage Server</div>
                 <div class="message-body">
                     <p>Selected Bot Instance:</p>
-                    <p>
-                        <?php
-                        /** @var \App\TheDialgaTeam\Discord\Table\DiscordAppTable $selectedBotInstance */
-                        $selectedBotInstance = $this->selectedBotInstance;
-
-                        if ($selectedBotInstance != null) {
-                            echo $selectedBotInstance->getAppName();
-                        }
-                        ?>
-                    </p>
+                    <p><?= $selectedBotInstance->getAppName() ?></p>
                     <div class="input-group mb-3">
                         <?php
-                        /** @var \App\Form\GuildSelectionForm $guildSelectionForm */
-                        $guildSelectionForm = $this->guildSelectionForm;
-
-                        if ($guildSelectionForm != null) {
-                            $guildSelectionForm->prepare();
+                        if (isset($guildSelectionForm))
                             echo $this->formRow($guildSelectionForm->get('guildId'));
-                        }
                         ?>
                     </div>
                 </div>
@@ -51,17 +57,7 @@
             <div class="message-body">
                 <p>To get started, select the bot instance to login with discord and choose the guild you would like
                     to setup.</p>
-                <?php
-                /** @var \Zend\Form\Form $botSelectionForm */
-                $botSelectionForm = $this->botSelectionForm;
-                $botSelectionForm->setAttributes([
-                    'action' => $this->url('discordAppAuthentication'),
-                    'method' => 'post'
-                ]);
-                $botSelectionForm->prepare();
-
-                echo $this->form()->openTag($botSelectionForm);
-                ?>
+                <?= $this->form()->openTag($botSelectionForm) ?>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="clientId">Bot Name</label>

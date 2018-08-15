@@ -1,6 +1,39 @@
-<?php $this->headTitle('Dashboard'); ?>
+<?php
+$this->headTitle('Dashboard');
+
+/** @var RestCord\Model\Guild\Guild $selectedGuild */
+$selectedGuild = $this->selectedGuild;
+
+/** @var App\Form\Dashboard\NicknameForm $nicknameForm */
+$nicknameForm = $this->nicknameForm;
+$nicknameForm->prepare();
+
+/** @var App\Form\Dashboard\CommandPrefixForm $commandPrefixForm */
+$commandPrefixForm = $this->commandPrefixForm;
+$commandPrefixForm->prepare();
+?>
 
 <div>
-    <h4>Bot Settings</h4>
+    <h4>Manage Server - <?= $selectedGuild->name ?></h4>
     <hr/>
+    <h5>Bot Settings</h5>
+    <hr/>
+    <div class="row">
+        <div class="col-sm-3">
+            <label>Nickname:</label>
+            <div class="input-group mb-3">
+                <?= $this->formRow($nicknameForm->get('nickname')) ?>
+                <div class="input-group-append">
+                    <?= $this->formRow($nicknameForm->get('updateNickname')) ?>
+                </div>
+            </div>
+            <label>Command Prefix:</label>
+            <div class="input-group mb-3">
+                <?= $this->formRow($commandPrefixForm->get('commandPrefix')) ?>
+                <div class="input-group-append">
+                    <?= $this->formRow($commandPrefixForm->get('updatecommandPrefix')) ?>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

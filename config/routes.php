@@ -45,7 +45,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
         App\Handler\LogoutHandler::class
     ], 'logout');
 
-    $app->get('/server/:clientId', [
+    $app->get('/server/:guildId', [
         App\Handler\DashboardHandler::class
     ], 'dashboard');
 };

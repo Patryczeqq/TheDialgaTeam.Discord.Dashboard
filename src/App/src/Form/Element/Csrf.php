@@ -5,8 +5,9 @@ namespace App\Form\Element;
 use Zend\Expressive\Csrf\SessionCsrfGuard;
 use Zend\Filter\StringTrim;
 use Zend\Form\Element;
+use Zend\InputFilter\InputProviderInterface;
 
-class Csrf extends Element
+class Csrf extends Element implements InputProviderInterface
 {
     protected $attributes = [
         'type' => 'hidden',

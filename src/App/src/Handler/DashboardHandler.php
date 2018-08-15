@@ -3,6 +3,8 @@
 namespace App\Handler;
 
 use App\Constant\Session;
+use App\Form\Dashboard\CommandPrefixForm;
+use App\Form\Dashboard\NicknameForm;
 use App\Form\GuildSelectionForm;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,8 +24,12 @@ class DashboardHandler extends BaseFormHandler
     {
         // Return vars
         $isLoggedIn = false;
-        $guildSelectionForm = null;
         $user = null;
+        $guildSelectionForm = null;
+        $selectedGuild = null;
+
+        $nicknameForm = new NicknameForm($this->guard, $this->session);
+        $commandPrefixForm = new CommandPrefixForm($this->guard, $this->session);
 
         if ($this->session->has(Session::DISCORD_OAUTH2_ACCESS_TOKEN)) {
             $isLoggedIn = true;
@@ -32,6 +38,14 @@ class DashboardHandler extends BaseFormHandler
             $user = $this->getDiscordClient()->user->getCurrentUser(array());
 
             $guildSelectionForm = new GuildSelectionForm($this->guard, $this->session, $guilds);
+
+            foreach ($guilds as $guild) {
+                if ($request->getAttribute('guildId') != $guild->id)
+                    continue;
+
+                $selectedGuild = $guild;
+                break;
+            }
         }
 
         $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'currentPage', "Dashboard");
@@ -40,7 +54,10 @@ class DashboardHandler extends BaseFormHandler
         $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'guildSelectionForm', $guildSelectionForm);
 
         return new HtmlResponse($this->templateRenderer->render('app::dashboard', [
-            'layout' => 'layout::dashboard'
+            'layout' => 'layout::dashboard',
+            'selectedGuild' => $selectedGuild,
+            'nicknameForm' => $nicknameForm,
+            'commandPrefixForm' => $commandPrefixForm,
         ]));
     }
 }

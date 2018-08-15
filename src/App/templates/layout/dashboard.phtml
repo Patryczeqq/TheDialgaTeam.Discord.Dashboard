@@ -3,10 +3,18 @@ $this->headLink()
     ->prependStylesheet($this->basePath('css/extra.css'))
     ->prependStylesheet('https://use.fontawesome.com/releases/v5.0.6/css/all.css')
     ->prependStylesheet('https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css');
+
 $this->inlineScript()
     ->prependFile($this->basePath('js/global.js'))
     ->prependFile('https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js')
     ->prependFile('https://code.jquery.com/jquery-3.3.1.min.js');
+
+/** @var RestCord\Model\User\User $user */
+$user = $this->user;
+
+/** @var App\Form\GuildSelectionForm $guildSelectionForm */
+$guildSelectionForm = $this->guildSelectionForm;
+$guildSelectionForm->prepare();
 ?>
 <!DOCTYPE html>
 <html>
@@ -59,32 +67,16 @@ $this->inlineScript()
                     <ul class="navbar-nav ml-auto" id="navbarCollapse">
                         <li class="nav-item">
                             <div class="input-group mb-3">
-                                <?php
-                                /** @var \App\Form\GuildSelectionForm $guildSelectionForm */
-                                $guildSelectionForm = $this->guildSelectionForm;
-
-                                if ($guildSelectionForm != null) {
-                                    $guildSelectionForm->prepare();
-                                    echo $this->formRow($guildSelectionForm->get('guildId'));
-                                }
-                                ?>
+                                <?= $this->formRow($guildSelectionForm->get('guildId')) ?>
                             </div>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<?= $this->url('home') ?>">
-                                <img src="<?php
-                                /** @var \RestCord\Model\User\User $user */
-                                $user = $this->user;
-                                echo $user->getAvatar('png');
-                                ?>" height="32"/>
+                                <img src="<?= $user->getAvatar('png') ?>" height="32"/>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= $this->url('home') ?>"><?php
-                                /** @var \RestCord\Model\User\User $user */
-                                $user = $this->user;
-                                echo $user->username;
-                                ?></a>
+                            <a class="nav-link" href="<?= $this->url('home') ?>"><?= $user->username ?></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<?= $this->url('logout') ?>">Logout</a>

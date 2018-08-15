@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Form\Element\Csrf;
+use App\Form\Element\Text;
 use App\Handler\BaseFormHandlerFactory;
 use App\Handler\DashboardHandler;
 use App\Handler\DiscordAppAuthenticationHandler;
@@ -46,6 +47,7 @@ class ConfigProvider
             'factories' => [
                 // Form
                 Csrf::class => InvokableFactory::class,
+                Text::class => InvokableFactory::class,
 
                 // Handler
                 HomeHandler::class => BaseFormHandlerFactory::class,
