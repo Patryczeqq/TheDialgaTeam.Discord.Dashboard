@@ -10,7 +10,7 @@ $guildSelectionForm = $this->guildSelectionForm;
 if (isset($guildSelectionForm))
     $guildSelectionForm->prepare();
 
-/** @var \Zend\Form\Form $botSelectionForm */
+/** @var App\Form\Home\BotSelectionForm $botSelectionForm */
 $botSelectionForm = $this->botSelectionForm;
 $botSelectionForm->setAttributes([
     'action' => $this->url('discordAppAuthentication'),
