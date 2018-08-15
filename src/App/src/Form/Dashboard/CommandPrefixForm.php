@@ -31,6 +31,9 @@ class CommandPrefixForm extends CsrfGuardedForm
             'attributes' => [
                 'class' => 'btn btn-outline-primary'
             ],
+            'options' => [
+                'label' => 'Update'
+            ]
         ]);
     }
 }
