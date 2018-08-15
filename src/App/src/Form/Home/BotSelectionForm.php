@@ -51,7 +51,8 @@ class BotSelectionForm extends CsrfGuardedForm
                     'class' => 'btn btn-primary',
                     'style' => 'color: white',
                     'type' => 'submit',
-                    'disabled' => 'disabled'
+                    'disabled' => 'disabled',
+                    'value' => 'submit'
                 ],
                 'options' => [
                     'label' => 'Login with Discord'
