@@ -200,6 +200,6 @@ abstract class BaseFormHandler implements MiddlewareInterface
             $error[] = sprintf('%s: %s', $key, $value);
         }
 
-        throw new \Exception(join("\n", $error));
+        throw new \Exception(join(' ', $error));
     }
 }
