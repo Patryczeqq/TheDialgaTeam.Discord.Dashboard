@@ -50,9 +50,8 @@ class CsrfGuardedForm extends Form
 
     private function getCsrfToken(string $csrfKey)
     {
-        if (!$this->session->has($csrfKey)) {
+        if (!$this->session->has($csrfKey))
             return $this->guard->generateToken($csrfKey);
-        }
 
         return $this->session->get($csrfKey);
     }

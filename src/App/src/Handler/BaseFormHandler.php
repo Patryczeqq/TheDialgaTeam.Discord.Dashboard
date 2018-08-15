@@ -20,6 +20,7 @@ use Zend\Expressive\Helper\UrlHelper;
 use Zend\Expressive\Session\SessionInterface;
 use Zend\Expressive\Session\SessionMiddleware;
 use Zend\Expressive\Template\TemplateRendererInterface;
+use Zend\Form\Form;
 
 /**
  * Class BaseFormHandler
@@ -185,5 +186,20 @@ abstract class BaseFormHandler implements MiddlewareInterface
             return $this->guard->generateToken();
 
         return $this->session->get($csrfKey);
+    }
+
+    /**
+     * @param Form $form
+     * @throws \Exception
+     */
+    protected function getFormError($form)
+    {
+        $error = array();
+
+        foreach ($form->getMessages() as $key => $value) {
+            $error[] = sprintf('%s: %s', $key, $value);
+        }
+
+        throw new \Exception(join("\n", $error));
     }
 }

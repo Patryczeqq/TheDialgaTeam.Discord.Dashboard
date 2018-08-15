@@ -60,7 +60,7 @@ class HomeHandler extends BaseFormHandler
 
         if (isset($this->get['error'])) {
             if (is_array($this->get['error']))
-                $error = join('\n', $this->get['error']);
+                $error = join("\n", $this->get['error']);
             else
                 $error = $this->get['error'];
         }

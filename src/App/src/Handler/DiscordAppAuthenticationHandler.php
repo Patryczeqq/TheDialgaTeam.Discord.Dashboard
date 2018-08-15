@@ -29,7 +29,8 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
             $botSelectionForm->setData($this->post);
 
             if (!$botSelectionForm->isValid())
-                throw new \Exception(join("\n", $botSelectionForm->getMessages()));
+                $this->getFormError($botSelectionForm);
+
 
             $botSelectionFormData = $botSelectionForm->getData();
             $clientId = $botSelectionFormData['clientId'];
@@ -55,7 +56,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
             $csrfGuardedForm->setData($this->get);
 
             if (!$csrfGuardedForm->isValid())
-                throw new \Exception(join("\n", $csrfGuardedForm->getMessages()));
+                $this->getFormError($csrfGuardedForm);
 
             $clientId = $this->session->get(Session::CLIENT_ID);
 
