@@ -7,6 +7,7 @@ use App\TheDialgaTeam\Discord\Table\DiscordAppTable;
 use Zend\Http\Client;
 use Zend\Http\Request;
 use Zend\Hydrator\ClassMethods;
+use Zend\Hydrator\Strategy\DateTimeFormatterStrategy;
 use Zend\Json\Json;
 
 /**
@@ -48,8 +49,11 @@ class NancyGateway
         $jsonArray = $this->getResponseFromServer($route);
         $discordAppTables = array();
 
+        $hydrator = new ClassMethods();
+        $hydrator->addStrategy("lastUpdateCheck", new DateTimeFormatterStrategy("Y-m-d\TH:i:s.u?P"));
+
         foreach ($jsonArray as $discordAppTable) {
-            $discordAppTables[] = (new ClassMethods())->hydrate($discordAppTable, new DiscordAppTable());
+            $discordAppTables[] = $hydrator->hydrate($discordAppTable, new DiscordAppTable());
         }
 
         return $discordAppTables;

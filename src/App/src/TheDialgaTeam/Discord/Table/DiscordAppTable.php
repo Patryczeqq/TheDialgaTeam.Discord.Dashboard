@@ -2,6 +2,8 @@
 
 namespace App\TheDialgaTeam\Discord\Table;
 
+use DateTime;
+
 /**
  * Class DiscordAppTable
  * @package App\TheDialgaTeam\Discord\Table
@@ -39,7 +41,7 @@ class DiscordAppTable
     private $botToken;
 
     /**
-     * @var string
+     * @var DateTime
      */
     private $lastUpdateCheck;
 
@@ -140,17 +142,17 @@ class DiscordAppTable
     }
 
     /**
-     * @return string
+     * @return DateTime
      */
-    public function getLastUpdateCheck(): string
+    public function getLastUpdateCheck(): DateTime
     {
         return $this->lastUpdateCheck;
     }
 
     /**
-     * @param string $lastUpdateCheck
+     * @param DateTime $lastUpdateCheck
      */
-    public function setLastUpdateCheck(string $lastUpdateCheck): void
+    public function setLastUpdateCheck(DateTime $lastUpdateCheck): void
     {
         $this->lastUpdateCheck = $lastUpdateCheck;
     }
