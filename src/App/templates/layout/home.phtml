@@ -19,22 +19,9 @@ $user = $this->user;
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <link rel="shortcut icon" href="https://framework.zend.com/ico/favicon.ico"/>
-    <?= $this->headTitle('Discord Web Dashboard')->setSeparator(' - ')->setAutoEscape(false) ?>
+    <?= $this->headTitle('The Dialga Team\'s bot')->setSeparator(' - ')->setAutoEscape(false) ?>
     <?= $this->headMeta() ?>
     <?= $this->headLink() ?>
-    <style>
-        body {
-            padding-top: 70px;
-        }
-
-        .app {
-            min-height: 100vh;
-        }
-
-        .app-footer {
-            padding-bottom: 1em;
-        }
-    </style>
 </head>
 <body class="app">
 <header class="app-header">
@@ -63,11 +50,12 @@ $user = $this->user;
                     <ul class="navbar-nav ml-auto" id="navbarCollapse">
                         <li class="nav-item">
                             <a class="nav-link" href="<?= $this->url('home') ?>">
-                                <img src="<?= $user->getAvatar('png') ?>" height="32"/>
+                                <img src="<?= isset($user) ? $user->getAvatar('png') : '' ?>" height="32"/>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= $this->url('home') ?>"><?= $user->username ?></a>
+                            <a class="nav-link"
+                               href="<?= $this->url('home') ?>"><?= isset($user) ? $user->username : '' ?></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<?= $this->url('logout') ?>">Logout</a>

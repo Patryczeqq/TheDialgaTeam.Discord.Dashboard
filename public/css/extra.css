@@ -1,6 +1,15 @@
 body {
     color: #dddddd;
     background-color: #333333;
+    padding-top: 70px;
+}
+
+.app {
+    min-height: 100vh;
+}
+
+.app-footer {
+    padding-bottom: 1em;
 }
 
 hr {

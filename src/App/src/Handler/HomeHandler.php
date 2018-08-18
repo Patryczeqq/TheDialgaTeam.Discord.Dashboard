@@ -17,10 +17,12 @@ class HomeHandler extends BaseFormHandler
     {
         // Return vars
         $isLoggedIn = false;
+        $user = null;
+
         $guildSelectionForm = null;
         $botSelectionForm = null;
         $selectedBotInstance = null;
-        $user = null;
+
         $error = null;
 
         if ($this->session->has(Session::DISCORD_OAUTH2_ACCESS_TOKEN)) {
@@ -28,8 +30,8 @@ class HomeHandler extends BaseFormHandler
             $guilds = array();
 
             try {
-                $guilds = $this->getDiscordClient()->user->getCurrentUserGuilds(array());
                 $user = $this->getDiscordClient()->user->getCurrentUser(array());
+                $guilds = $this->getDiscordClient()->user->getCurrentUserGuilds(array());
             } catch (\Exception $ex) {
                 $this->session->clear();
                 $error = $ex->getMessage();
@@ -46,6 +48,8 @@ class HomeHandler extends BaseFormHandler
             $error = $ex->getMessage();
         }
 
+        $botSelectionForm = new BotSelectionForm($this->guard, $this->session, $discordAppTables);
+
         if ($this->session->has(Session::CLIENT_ID)) {
             foreach ($discordAppTables as $discordAppTable) {
                 if ($discordAppTable->getClientId() != $this->session->get(Session::CLIENT_ID))
@@ -55,8 +59,6 @@ class HomeHandler extends BaseFormHandler
                 break;
             }
         }
-
-        $botSelectionForm = new BotSelectionForm($this->guard, $this->session, $discordAppTables);
 
         if (isset($this->get['error'])) {
             if (is_array($this->get['error']))
@@ -69,6 +71,7 @@ class HomeHandler extends BaseFormHandler
         $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'user', $user);
 
         return new HtmlResponse($this->templateRenderer->render('app::home', [
+            'layout' => "home",
             'botSelectionForm' => $botSelectionForm,
             'guildSelectionForm' => $guildSelectionForm,
             'selectedBotInstance' => $selectedBotInstance,

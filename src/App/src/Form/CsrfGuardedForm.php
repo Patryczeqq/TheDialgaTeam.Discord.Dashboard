@@ -31,7 +31,7 @@ class CsrfGuardedForm extends Form
      */
     public function __construct(SessionCsrfGuard $guard, SessionInterface $session, string $csrfKey = 'csrf')
     {
-        parent::__construct();
+        parent::__construct(self::class);
 
         $this->guard = $guard;
         $this->session = $session;

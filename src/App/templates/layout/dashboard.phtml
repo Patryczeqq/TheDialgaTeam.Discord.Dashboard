@@ -17,7 +17,9 @@ $selectedGuild = $this->selectedGuild;
 
 /** @var App\Form\GuildSelectionForm $guildSelectionForm */
 $guildSelectionForm = $this->guildSelectionForm;
-$guildSelectionForm->prepare();
+
+if (isset($guildSelectionForm))
+    $guildSelectionForm->prepare();
 ?>
 <!DOCTYPE html>
 <html>
@@ -29,19 +31,6 @@ $guildSelectionForm->prepare();
     <?= $this->headTitle('Discord Web Dashboard')->setSeparator(' - ')->setAutoEscape(false) ?>
     <?= $this->headMeta() ?>
     <?= $this->headLink() ?>
-    <style>
-        body {
-            padding-top: 70px;
-        }
-
-        .app {
-            min-height: 100vh;
-        }
-
-        .app-footer {
-            padding-bottom: 1em;
-        }
-    </style>
 </head>
 <body class="app">
 <header class="app-header">
@@ -70,16 +59,17 @@ $guildSelectionForm->prepare();
                     <ul class="navbar-nav ml-auto" id="navbarCollapse">
                         <li class="nav-item">
                             <div class="input-group mb-3">
-                                <?= $this->formRow($guildSelectionForm->get('guildId')) ?>
+                                <?= isset($guildSelectionForm) ? $this->formRow($guildSelectionForm->get('guildId')) : '' ?>
                             </div>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<?= $this->url('home') ?>">
-                                <img src="<?= $user->getAvatar('png') ?>" height="32"/>
+                                <img src="<?= isset($user) ? $user->getAvatar('png') : '' ?>" height="32"/>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= $this->url('home') ?>"><?= $user->username ?></a>
+                            <a class="nav-link"
+                               href="<?= $this->url('home') ?>"><?= isset($user) ? $user->username : '' ?></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<?= $this->url('logout') ?>">Logout</a>

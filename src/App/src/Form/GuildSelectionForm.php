@@ -5,6 +5,7 @@ namespace App\Form;
 use RestCord\Model\Guild\Guild;
 use Zend\Expressive\Csrf\SessionCsrfGuard;
 use Zend\Expressive\Session\SessionInterface;
+use Zend\Form\Element\Hidden;
 use Zend\Form\Element\Select;
 
 /**
@@ -26,7 +27,7 @@ class GuildSelectionForm extends CsrfGuardedForm
         $guildIdOptions = array();
 
         foreach ($guilds as $guild) {
-            if ($guild->permissions & 0x20) {
+            if ($guild->permissions & 0x20 == 0x20) {
                 // User has manage server perms
                 $guildIdOptions[$guild->id] = $guild->name;
             }
@@ -56,5 +57,13 @@ class GuildSelectionForm extends CsrfGuardedForm
                 ]
             ]);
         }
+
+        $this->add([
+            'name' => 'action',
+            'type' => Hidden::class,
+            'attributes' => [
+                'value' => 'discordGuildAuthentication'
+            ]
+        ]);
     }
 }

@@ -104,7 +104,7 @@ abstract class BaseFormHandler implements MiddlewareInterface
             $this->session->clear();
 
             return new RedirectResponse($this->urlHelper->generate('home', [], [
-                'error' => sprintf('%s (Line: %d) (Source: %s)', $ex->getMessage(), $ex->getLine(), $ex->getFile())
+                'error' => $ex->getMessage()
             ]));
         }
     }

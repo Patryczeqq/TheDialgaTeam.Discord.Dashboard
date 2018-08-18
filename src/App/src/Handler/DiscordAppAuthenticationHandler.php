@@ -5,6 +5,7 @@ namespace App\Handler;
 use App\Constant\Error;
 use App\Constant\Session;
 use App\Form\CsrfGuardedForm;
+use App\Form\GuildSelectionForm;
 use App\Form\Home\BotSelectionForm;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,8 +22,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
      */
     protected function onProcess(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (isset($this->post['action']) && $this->post['action'] == 'discordAppAuthentication') {
-            // If this request is from HomeHandler form.
+        if ($this->post['action'] == 'discordAppAuthentication') {
             $discordAppTables = $this->nancyGateway->getDiscordAppTable();
 
             $botSelectionForm = new BotSelectionForm($this->guard, $this->session, $discordAppTables);
@@ -31,15 +31,10 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
             if (!$botSelectionForm->isValid())
                 $this->getFormError($botSelectionForm);
 
-
             $botSelectionFormData = $botSelectionForm->getData();
             $clientId = $botSelectionFormData['clientId'];
 
-            $this->session = $this->session->regenerate();
-
-            if (!$this->session->isRegenerated())
-                throw new \Exception(Error::ERROR_INVALID_SESSION);
-
+            $this->session->clear();
             $this->session->set(Session::CLIENT_ID, $clientId);
 
             $discordOAuth2 = $this->getDiscordOAuth2($clientId);
@@ -50,6 +45,33 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
             ]));
         }
 
+        if ($this->post['action'] == 'discordGuildAuthentication') {
+            $guilds = $this->getDiscordClient()->user->getCurrentUserGuilds(array());
+
+            $guildSelectionForm = new GuildSelectionForm($this->guard, $this->session, $guilds);
+            $guildSelectionForm->setData($this->post);
+
+            if (!$guildSelectionForm->isValid())
+                $this->getFormError($guildSelectionForm);
+
+            $guildSelectionFormData = $guildSelectionForm->getData();
+            $guildId = $guildSelectionFormData['guildId'];
+            $clientId = $this->session->get('clientId');
+
+            if (!$this->nancyGateway->checkBotExist($clientId, $guildId)) {
+                $discordOAuth2 = $this->getDiscordOAuth2($clientId);
+
+                return new RedirectResponse($discordOAuth2->getAuthorizationUrl([
+                    'state' => $this->getCsrfToken(),
+                    'scope' => ['identify', 'guilds', 'guilds.join', 'bot'],
+                    'guild_id' => $guildId,
+                    'permission' => 8
+                ]));
+            } else {
+                return new RedirectResponse($this->urlHelper->generate('dashboard', ['guildId' => $guildId]));
+            }
+        }
+
         if (isset($this->get['code']) && isset($this->get['state'])) {
             // If this request is from Discord OAuth2.
             $this->session->set('state', $this->get['state']);
@@ -58,6 +80,9 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
 
             if (!$csrfGuardedForm->isValid())
                 $this->getFormError($csrfGuardedForm);
+
+            if (!$this->session->has(Session::CLIENT_ID))
+                throw new \Exception(Error::ERROR_INVALID_SESSION);
 
             $clientId = $this->session->get(Session::CLIENT_ID);
 

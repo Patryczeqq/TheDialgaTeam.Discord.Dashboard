@@ -7,16 +7,26 @@ $selectedBotInstance = $this->selectedBotInstance;
 /** @var App\Form\GuildSelectionForm $guildSelectionForm */
 $guildSelectionForm = $this->guildSelectionForm;
 
-if (isset($guildSelectionForm))
+if (isset($guildSelectionForm)) {
+    $guildSelectionForm->setAttributes([
+        'action' => $this->url('discordAppAuthentication'),
+        'method' => 'post'
+    ]);
+
     $guildSelectionForm->prepare();
+}
 
 /** @var App\Form\Home\BotSelectionForm $botSelectionForm */
 $botSelectionForm = $this->botSelectionForm;
-$botSelectionForm->setAttributes([
-    'action' => $this->url('discordAppAuthentication'),
-    'method' => 'post'
-]);
-$botSelectionForm->prepare();
+
+if (isset($botSelectionForm)) {
+    $botSelectionForm->setAttributes([
+        'action' => $this->url('discordAppAuthentication'),
+        'method' => 'post'
+    ]);
+
+    $botSelectionForm->prepare();
+}
 ?>
 
 <?php if (!empty($this->error)): ?>
@@ -40,13 +50,14 @@ $botSelectionForm->prepare();
                 <div class="message-header">Manage Server</div>
                 <div class="message-body">
                     <p>Selected Bot Instance:</p>
-                    <p><?= $selectedBotInstance->getAppName() ?></p>
+                    <p><?= isset($selectedBotInstance) ? $selectedBotInstance->getAppName() : '' ?></p>
+                    <?= isset($guildSelectionForm) ? $this->form()->openTag($botSelectionForm) : '' ?>
                     <div class="input-group mb-3">
-                        <?php
-                        if (isset($guildSelectionForm))
-                            echo $this->formRow($guildSelectionForm->get('guildId'));
-                        ?>
+                        <?= isset($guildSelectionForm) ? $this->formRow($guildSelectionForm->get('guildId')) : '' ?>
                     </div>
+                    <?= isset($guildSelectionForm) ? $this->formRow($guildSelectionForm->get('action')) : '' ?>
+                    <?= isset($guildSelectionForm) ? $this->formRow($guildSelectionForm->get('csrf_guild_selection_form')) : '' ?>
+                    <?= isset($guildSelectionForm) ? $this->form()->closeTag() : '' ?>
                 </div>
             </div>
         <?php endif; ?>

@@ -46,7 +46,7 @@ class NancyGateway
     public function getDiscordAppTable($clientId = null)
     {
         $route = isset($clientId) ? "getDiscordAppTable/clientId/$clientId" : 'getDiscordAppTable';
-        $jsonArray = $this->getResponseFromServer($route);
+        $jsonArray = $this->getResponseFromServer($route, Request::METHOD_GET);
         $discordAppTables = array();
 
         $hydrator = new ClassMethods();
@@ -60,18 +60,53 @@ class NancyGateway
     }
 
     /**
+     * @param string $clientId
+     * @param string $guildId
+     * @return bool
+     * @throws \Exception
+     */
+    public function checkBotExist($clientId, $guildId)
+    {
+        $route = "checkBotExist/clientId/$clientId/guildId/$guildId";
+        $jsonArray = $this->getResponseFromServer($route, Request::METHOD_GET);
+
+        $hydrator = new ClassMethods();
+
+        /**
+         * @var NancyResult $result
+         */
+        $result = $hydrator->hydrate($jsonArray, new NancyResult());
+
+        return $result->isSuccess();
+    }
+
+    /**
      * @param string $route
+     * @param string $method
+     * @param array $params
      * @return array
      * @throws \Exception
      */
-    private function getResponseFromServer($route)
+    private function getResponseFromServer($route, $method, $params = array())
     {
         try {
             $client = new Client();
 
             $request = new Request();
             $request->setUri($this->generateAPIUrl($route));
-            $request->setMethod(Request::METHOD_GET);
+            $request->setMethod($method);
+
+            if (is_array($params) && count($params) > 0) {
+                if ($method == Request::METHOD_GET) {
+                    foreach ($params as $key => $value) {
+                        $request->getQuery()->set($key, $value);
+                    }
+                } elseif ($method == Request::METHOD_POST || $method == Request::METHOD_PATCH || $method == Request::METHOD_PUT) {
+                    foreach ($params as $key => $value) {
+                        $request->getPost()->set($key, $value);
+                    }
+                }
+            }
 
             $response = $client->send($request);
             $json = $response->getBody();
