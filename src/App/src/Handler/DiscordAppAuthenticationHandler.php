@@ -56,7 +56,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
 
             $guildSelectionFormData = $guildSelectionForm->getData();
             $guildId = $guildSelectionFormData['guildId'];
-            $clientId = $this->session->get('clientId');
+            $clientId = $this->session->get(Session::CLIENT_ID);
 
             if (!$this->nancyGateway->checkBotExist($clientId, $guildId)) {
                 $discordOAuth2 = $this->getDiscordOAuth2($clientId);
