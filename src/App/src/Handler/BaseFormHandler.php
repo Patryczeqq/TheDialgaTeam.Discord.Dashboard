@@ -154,7 +154,7 @@ abstract class BaseFormHandler implements MiddlewareInterface
             if (!$this->session->has(Session::CLIENT_ID))
                 throw new \Exception(Error::ERROR_INVALID_SESSION);
 
-            $clientId = $this->session->get('clientId');
+            $clientId = $this->session->get(Session::CLIENT_ID);
             $discordOAuth2 = $this->getDiscordOAuth2($clientId);
 
             try {

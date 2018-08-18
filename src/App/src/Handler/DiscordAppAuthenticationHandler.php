@@ -104,10 +104,9 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
             }
         }
 
-        if (isset($this->get['error'])) {
-            return new RedirectResponse($this->urlHelper->generate('home'));
-        }
-
-        throw new \Exception(Error::ERROR_INVALID_REQUEST);
+        if (isset($this->get['error']))
+            return new RedirectResponse($this->urlHelper->generate('home', [], ['error' => $this->get['error']]));
+        else
+            throw new \Exception(Error::ERROR_INVALID_REQUEST);
     }
 }
