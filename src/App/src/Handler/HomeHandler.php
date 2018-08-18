@@ -71,7 +71,7 @@ class HomeHandler extends BaseFormHandler
         $this->templateRenderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'user', $user);
 
         return new HtmlResponse($this->templateRenderer->render('app::home', [
-            'layout' => "home",
+            'layout' => "layout::home",
             'botSelectionForm' => $botSelectionForm,
             'guildSelectionForm' => $guildSelectionForm,
             'selectedBotInstance' => $selectedBotInstance,
