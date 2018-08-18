@@ -65,7 +65,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
                     'state' => $this->getCsrfToken(),
                     'scope' => ['identify', 'guilds', 'guilds.join', 'bot'],
                     'guild_id' => $guildId,
-                    'permission' => 8
+                    'permission' => 0x8
                 ]));
             } else {
                 return new RedirectResponse($this->urlHelper->generate('dashboard', ['guildId' => $guildId]));
