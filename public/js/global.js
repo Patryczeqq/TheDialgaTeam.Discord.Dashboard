@@ -1,7 +1,7 @@
 (function ($) {
     $(document).ready(function () {
         $('.guildId').on('change', function () {
-            window.location.href = '/server/' + $(this).val();
+            this.form.submit();
         });
 
         $('.overlay').on('click', function () {
