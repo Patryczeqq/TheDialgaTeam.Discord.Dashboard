@@ -63,7 +63,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
 
                 return new RedirectResponse($discordOAuth2->getAuthorizationUrl([
                     'state' => $this->getCsrfToken(),
-                    'scope' => ['bot'],
+                    'scope' => ['identify', 'guilds', 'guilds.join', 'bot'],
                     'guild_id' => $guildId,
                     'permissions' => 0x8
                 ]));
@@ -95,8 +95,8 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
 
                 $this->session->set(Session::DISCORD_OAUTH2_ACCESS_TOKEN, $accessToken->jsonSerialize());
 
-                if (isset($this->get['guildId']))
-                    return new RedirectResponse($this->urlHelper->generate('dashboard', ['guildId' => $this->get['guildId']]));
+                if (isset($this->get['guild_id']))
+                    return new RedirectResponse($this->urlHelper->generate('dashboard', ['guildId' => $this->get['guild_id']]));
                 else
                     return new RedirectResponse($this->urlHelper->generate('home'));
             } catch (\Exception $ex) {
