@@ -22,7 +22,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
      */
     protected function onProcess(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($this->post['action'] == 'discordAppAuthentication') {
+        if (isset($this->post['action']) && $this->post['action'] == 'discordAppAuthentication') {
             $discordAppTables = $this->nancyGateway->getDiscordAppTable();
 
             $botSelectionForm = new BotSelectionForm($this->guard, $this->session, $discordAppTables);
@@ -45,7 +45,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
             ]));
         }
 
-        if ($this->post['action'] == 'discordGuildAuthentication') {
+        if (isset($this->post['action']) && $this->post['action'] == 'discordGuildAuthentication') {
             $guilds = $this->getDiscordClient()->user->getCurrentUserGuilds(array());
 
             $guildSelectionForm = new GuildSelectionForm($this->guard, $this->session, $guilds);
