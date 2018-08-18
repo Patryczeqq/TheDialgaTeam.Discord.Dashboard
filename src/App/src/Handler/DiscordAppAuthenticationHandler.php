@@ -95,7 +95,10 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
 
                 $this->session->set(Session::DISCORD_OAUTH2_ACCESS_TOKEN, $accessToken->jsonSerialize());
 
-                return new RedirectResponse($this->urlHelper->generate('home'));
+                if (isset($this->get['guildId']))
+                    return new RedirectResponse($this->urlHelper->generate('dashboard', ['guildId' => $this->get['guildId']]));
+                else
+                    return new RedirectResponse($this->urlHelper->generate('home'));
             } catch (\Exception $ex) {
                 throw new \Exception(Error::ERROR_DISCORD_GATEWAY);
             }
