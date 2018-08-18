@@ -27,8 +27,8 @@ class GuildSelectionForm extends CsrfGuardedForm
         $guildIdOptions = array();
 
         foreach ($guilds as $guild) {
-            if ($guild->permissions & 0x20 == 0x20) {
-                // User has manage server perms
+            if ($guild->permissions & 0x28) {
+                // User has ADMINISTRATOR OR MANAGE_GUILD
                 $guildIdOptions[$guild->id] = $guild->name;
             }
         }
