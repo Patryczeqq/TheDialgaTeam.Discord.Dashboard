@@ -63,7 +63,7 @@ class DiscordAppAuthenticationHandler extends BaseFormHandler
 
                 return new RedirectResponse($discordOAuth2->getAuthorizationUrl([
                     'state' => $this->getCsrfToken(),
-                    'scope' => ['identify', 'guilds', 'guilds.join', 'bot'],
+                    'scope' => ['bot'],
                     'guild_id' => $guildId,
                     'permissions' => 0x8
                 ]));
