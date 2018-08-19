@@ -11,6 +11,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RestCord\DiscordClient;
+use RestCord\Model\Guild\Guild;
+use RestCord\Model\User\User;
 use Wohali\OAuth2\Client\Provider\Discord;
 use Zend\Diactoros\Response\RedirectResponse;
 use Zend\Expressive\Csrf\CsrfMiddleware;
@@ -21,6 +23,7 @@ use Zend\Expressive\Session\SessionInterface;
 use Zend\Expressive\Session\SessionMiddleware;
 use Zend\Expressive\Template\TemplateRendererInterface;
 use Zend\Form\Form;
+use Zend\Json\Json;
 
 /**
  * Class BaseFormHandler
@@ -103,9 +106,11 @@ abstract class BaseFormHandler implements MiddlewareInterface
         } catch (\Exception $ex) {
             $this->session->clear();
 
-            return new RedirectResponse($this->urlHelper->generate('home', [], [
-                'error' => $ex->getMessage()
-            ]));
+            if (get_class($this) != HomeHandler::class) {
+                return new RedirectResponse($this->urlHelper->generate('home', [], [
+                    'error' => $ex->getMessage()
+                ]));
+            }
         }
     }
 
@@ -203,5 +208,59 @@ abstract class BaseFormHandler implements MiddlewareInterface
         }
 
         throw new \Exception(join(' ', $error));
+    }
+
+    /**
+     * @param bool $getFromCache
+     * @return User
+     * @throws \Exception
+     */
+    protected function getCurrentUser($getFromCache = true)
+    {
+        if ($getFromCache && $this->session->has(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER)) {
+            $user = new User($this->session->get(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER));
+        } else {
+            try {
+                $user = $this->getDiscordClient()->user->getCurrentUser(array());
+                $this->session->set(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER, Json::encode($user));
+            } catch (\Exception $ex) {
+                throw new \Exception(Error::ERROR_DISCORD_GATEWAY);
+            }
+        }
+
+        return $user;
+    }
+
+    /**
+     * @param bool $getFromCache
+     * @return array|Guild[]
+     * @throws \Exception
+     */
+    protected function getCurrentUserGuilds($getFromCache = true)
+    {
+        $guilds = array();
+
+        if ($this->session->has(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER_GUILDS)) {
+            $guilds_array = Json::decode($this->session->get(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER_GUILDS), Json::TYPE_ARRAY);
+
+            foreach ($guilds_array as $key => $value) {
+                $guilds[] = new Guild($value);
+            }
+        } else {
+            try {
+                $guilds = $this->getDiscordClient()->user->getCurrentUserGuilds(array());
+                $guilds_json = array();
+
+                foreach ($guilds as $guild) {
+                    $guilds_json[] = Json::encode($guild);
+                }
+
+                $this->session->set(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER_GUILDS, sprintf('[%s]', join(',', $guilds_json)));
+            } catch (\Exception $ex) {
+                throw new \Exception(Error::ERROR_DISCORD_GATEWAY);
+            }
+        }
+
+        return $guilds;
     }
 }

@@ -33,9 +33,9 @@ use Zend\Expressive\MiddlewareFactory;
  * );
  */
 return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
-    $app->get('/', [
+    $app->route('/', [
         App\Handler\HomeHandler::class
-    ], 'home');
+    ], ['GET', 'POST'], 'home');
 
     $app->route('/discordAppAuthentication', [
         App\Handler\DiscordAppAuthenticationHandler::class

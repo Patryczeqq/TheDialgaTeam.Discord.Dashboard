@@ -15,7 +15,7 @@ class HomeHandler extends BaseFormHandler
 {
     protected function onProcess(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // Return vars
+        // Global Template Vars
         $isLoggedIn = false;
         $user = null;
 
@@ -26,12 +26,19 @@ class HomeHandler extends BaseFormHandler
         $error = null;
 
         if ($this->session->has(Session::DISCORD_OAUTH2_ACCESS_TOKEN)) {
+            // User have authenticate discord oauth2 access token.
             $isLoggedIn = true;
+            $user = null;
             $guilds = array();
 
             try {
-                $user = $this->getDiscordClient()->user->getCurrentUser(array());
-                $guilds = $this->getDiscordClient()->user->getCurrentUserGuilds(array());
+                if (isset($this->post['action']) && $this->post['action'] == 'refresh_discord_client_models') {
+                    $user = $this->getCurrentUser(false);
+                    $guilds = $this->getCurrentUserGuilds(false);
+                } else {
+                    $user = $this->getCurrentUser();
+                    $guilds = $this->getCurrentUserGuilds();
+                }
             } catch (\Exception $ex) {
                 $this->session->clear();
                 $error = $ex->getMessage();
