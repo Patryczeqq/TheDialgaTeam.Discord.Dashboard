@@ -31,11 +31,17 @@ class HomeHandler extends BaseFormHandler
         if ($this->session->has(Session::DISCORD_OAUTH2_ACCESS_TOKEN)) {
             // User have authenticate discord oauth2 access token.
             $isLoggedIn = true;
-            $user = null;
             $guilds = array();
+
+            $refreshGuildsForm = new RefreshGuildsForm($this->guard, $this->session);
 
             try {
                 if (isset($this->post['action']) && $this->post['action'] == 'refresh_discord_client_models') {
+                    $refreshGuildsForm->setData($this->post);
+
+                    if (!$refreshGuildsForm->isValid())
+                        $this->getFormError($refreshGuildsForm);
+
                     $user = $this->getDiscordClientCurrentUser(false);
                     $guilds = $this->getDiscordClientCurrentUserGuilds(false);
                 } else {
@@ -47,7 +53,6 @@ class HomeHandler extends BaseFormHandler
                 $error = $ex->getMessage();
             }
 
-            $refreshGuildsForm = new RefreshGuildsForm($this->guard, $this->session);
             $guildSelectionForm = new GuildSelectionForm($this->guard, $this->session, $guilds);
         }
 

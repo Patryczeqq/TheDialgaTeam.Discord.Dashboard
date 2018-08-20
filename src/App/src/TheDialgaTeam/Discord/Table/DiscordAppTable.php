@@ -11,148 +11,148 @@ use DateTime;
 class DiscordAppTable
 {
     /**
-     * @var int
+     * @var int|null
      */
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $clientId;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $clientSecret;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $appName;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $appDescription;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $botToken;
 
     /**
-     * @var DateTime
+     * @var DateTime|null
      */
     private $lastUpdateCheck;
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getId(): int
+    public function getId(): ?int
     {
         return $this->id;
     }
 
     /**
-     * @param int $id
+     * @param int|null $id
      */
-    public function setId(int $id): void
+    public function setId(?int $id): void
     {
         $this->id = $id;
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getClientId(): string
+    public function getClientId(): ?string
     {
         return $this->clientId;
     }
 
     /**
-     * @param string $clientId
+     * @param null|string $clientId
      */
-    public function setClientId(string $clientId): void
+    public function setClientId(?string $clientId): void
     {
         $this->clientId = $clientId;
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getClientSecret(): string
+    public function getClientSecret(): ?string
     {
         return $this->clientSecret;
     }
 
     /**
-     * @param string $clientSecret
+     * @param null|string $clientSecret
      */
-    public function setClientSecret(string $clientSecret): void
+    public function setClientSecret(?string $clientSecret): void
     {
         $this->clientSecret = $clientSecret;
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getAppName(): string
+    public function getAppName(): ?string
     {
         return $this->appName;
     }
 
     /**
-     * @param string $appName
+     * @param null|string $appName
      */
-    public function setAppName(string $appName): void
+    public function setAppName(?string $appName): void
     {
         $this->appName = $appName;
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getAppDescription(): string
+    public function getAppDescription(): ?string
     {
         return $this->appDescription;
     }
 
     /**
-     * @param string $appDescription
+     * @param null|string $appDescription
      */
-    public function setAppDescription(string $appDescription): void
+    public function setAppDescription(?string $appDescription): void
     {
         $this->appDescription = $appDescription;
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getBotToken(): string
+    public function getBotToken(): ?string
     {
         return $this->botToken;
     }
 
     /**
-     * @param string $botToken
+     * @param null|string $botToken
      */
-    public function setBotToken(string $botToken): void
+    public function setBotToken(?string $botToken): void
     {
         $this->botToken = $botToken;
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|null
      */
-    public function getLastUpdateCheck(): DateTime
+    public function getLastUpdateCheck(): ?DateTime
     {
         return $this->lastUpdateCheck;
     }
 
     /**
-     * @param DateTime $lastUpdateCheck
+     * @param DateTime|null $lastUpdateCheck
      */
-    public function setLastUpdateCheck(DateTime $lastUpdateCheck): void
+    public function setLastUpdateCheck(?DateTime $lastUpdateCheck): void
     {
         $this->lastUpdateCheck = $lastUpdateCheck;
     }

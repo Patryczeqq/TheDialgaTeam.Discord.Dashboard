@@ -113,6 +113,8 @@ abstract class BaseFormHandler implements MiddlewareInterface
                 ]));
             }
         }
+
+        return $handler->handle($request);
     }
 
     protected abstract function onProcess(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface;
@@ -177,7 +179,7 @@ abstract class BaseFormHandler implements MiddlewareInterface
         $clientId = $this->getSessionValue(Session::CLIENT_ID);
 
         try {
-            $discordAppTables = $this->nancyGateway->getDiscordAppTable($clientId);
+            $discordAppTables = $this->nancyGateway->baseModule->getDiscordAppTable($clientId);
         } catch (\Exception $ex) {
             throw new \Exception(Error::ERROR_NANCY_GATEWAY);
         }

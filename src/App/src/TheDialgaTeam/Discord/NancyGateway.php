@@ -3,11 +3,10 @@
 namespace App\TheDialgaTeam\Discord;
 
 use App\Constant\Error;
-use App\TheDialgaTeam\Discord\Table\DiscordAppTable;
+use App\TheDialgaTeam\Discord\Module\BaseModule;
 use Zend\Http\Client;
 use Zend\Http\Request;
 use Zend\Hydrator\ClassMethods;
-use Zend\Hydrator\Strategy\DateTimeFormatterStrategy;
 use Zend\Json\Json;
 
 /**
@@ -16,6 +15,11 @@ use Zend\Json\Json;
  */
 class NancyGateway
 {
+    /**
+     * @var BaseModule
+     */
+    public $baseModule;
+
     /**
      * Nancy gateway url.
      * @var string
@@ -36,27 +40,8 @@ class NancyGateway
     {
         $this->url = $config['url'];
         $this->port = $config['port'];
-    }
 
-    /**
-     * @param null|string $clientId
-     * @return array|DiscordAppTable[]
-     * @throws \Exception
-     */
-    public function getDiscordAppTable($clientId = null)
-    {
-        $route = isset($clientId) ? "getDiscordAppTable/clientId/$clientId" : 'getDiscordAppTable';
-        $jsonArray = $this->getResponseFromServer($route, Request::METHOD_GET);
-        $discordAppTables = array();
-
-        $hydrator = new ClassMethods();
-        $hydrator->addStrategy("lastUpdateCheck", new DateTimeFormatterStrategy("Y-m-d\TH:i:s.u?P"));
-
-        foreach ($jsonArray as $discordAppTable) {
-            $discordAppTables[] = $hydrator->hydrate($discordAppTable, new DiscordAppTable());
-        }
-
-        return $discordAppTables;
+        $this->baseModule = new BaseModule($this);
     }
 
     /**
@@ -72,9 +57,7 @@ class NancyGateway
 
         $hydrator = new ClassMethods();
 
-        /**
-         * @var NancyResult $result
-         */
+        /** @var NancyResult $result */
         $result = $hydrator->hydrate($jsonArray, new NancyResult());
 
         return $result->isSuccess();
@@ -87,7 +70,7 @@ class NancyGateway
      * @return array
      * @throws \Exception
      */
-    private function getResponseFromServer($route, $method, $params = array())
+    public function getResponseFromServer($route, $method, $params = array())
     {
         try {
             $client = new Client();
