@@ -232,7 +232,8 @@ abstract class BaseFormHandler implements MiddlewareInterface
     protected function getDiscordClientCurrentUser($getFromCache = true)
     {
         if ($getFromCache && $this->session->has(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER)) {
-            $user = new User($this->session->get(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER));
+            $jsonArray = Json::decode($this->session->get(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER), Json::TYPE_ARRAY);
+            $user = new User($jsonArray);
         } else {
             try {
                 $user = $this->getDiscordClient()->user->getCurrentUser(array());
@@ -255,21 +256,21 @@ abstract class BaseFormHandler implements MiddlewareInterface
         $guilds = array();
 
         if ($getFromCache && $this->session->has(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER_GUILDS)) {
-            $guilds_array = Json::decode($this->session->get(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER_GUILDS), Json::TYPE_ARRAY);
+            $jsonArray = Json::decode($this->session->get(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER_GUILDS), Json::TYPE_ARRAY);
 
-            foreach ($guilds_array as $key => $value) {
+            foreach ($jsonArray as $key => $value) {
                 $guilds[] = new Guild($value);
             }
         } else {
             try {
                 $guilds = $this->getDiscordClient()->user->getCurrentUserGuilds(array());
-                $guilds_json = array();
+                $jsonArray = array();
 
                 foreach ($guilds as $guild) {
-                    $guilds_json[] = Json::encode($guild);
+                    $jsonArray[] = Json::encode($guild);
                 }
 
-                $this->session->set(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER_GUILDS, sprintf('[%s]', join(',', $guilds_json)));
+                $this->session->set(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER_GUILDS, sprintf('[%s]', join(',', $jsonArray)));
             } catch (\Exception $ex) {
                 throw new \Exception(Error::ERROR_DISCORD_GATEWAY);
             }
