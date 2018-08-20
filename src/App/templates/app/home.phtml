@@ -92,13 +92,14 @@ if (isset($refreshGuildsForm)) {
                 <?= $this->formRow($botSelectionForm->get('csrf_bot_selection_form')) ?>
                 <?= $this->form()->closeTag() ?>
 
-                <br/>
-
-                <?= $this->form()->openTag($refreshGuildsForm) ?>
-                <?= $this->formRow($refreshGuildsForm->get('refresh')) ?>
-                <?= $this->formRow($refreshGuildsForm->get('action')) ?>
-                <?= $this->formRow($refreshGuildsForm->get('csrf_refresh_guilds_form')) ?>
-                <?= $this->form()->closeTag() ?>
+                <?php if ($this->isLoggedIn): ?>
+                    <br/>
+                    <?= isset($refreshGuildsForm) ? $this->form()->openTag($refreshGuildsForm) : '' ?>
+                    <?= isset($refreshGuildsForm) ? $this->formRow($refreshGuildsForm->get('refresh')) : '' ?>
+                    <?= isset($refreshGuildsForm) ? $this->formRow($refreshGuildsForm->get('action')) : '' ?>
+                    <?= isset($refreshGuildsForm) ? $this->formRow($refreshGuildsForm->get('csrf_refresh_guilds_form')) : '' ?>
+                    <?= isset($refreshGuildsForm) ? $this->form()->closeTag() : '' ?>
+                <?php endif; ?>
             </div>
         </div>
         <div class="message">
