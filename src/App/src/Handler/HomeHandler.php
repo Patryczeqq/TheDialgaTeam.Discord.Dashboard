@@ -5,6 +5,7 @@ namespace App\Handler;
 use App\Constant\Session;
 use App\Form\GuildSelectionForm;
 use App\Form\Home\BotSelectionForm;
+use App\Form\Home\RefreshGuildsForm;
 use App\Handler\BaseForm\BaseFormHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,6 +23,7 @@ class HomeHandler extends BaseFormHandler
 
         $guildSelectionForm = null;
         $botSelectionForm = null;
+        $refreshGuildsForm = null;
         $selectedBotInstance = null;
 
         $error = null;
@@ -45,6 +47,7 @@ class HomeHandler extends BaseFormHandler
                 $error = $ex->getMessage();
             }
 
+            $refreshGuildsForm = new RefreshGuildsForm($this->guard, $this->session);
             $guildSelectionForm = new GuildSelectionForm($this->guard, $this->session, $guilds);
         }
 
@@ -84,6 +87,7 @@ class HomeHandler extends BaseFormHandler
             'botSelectionForm' => $botSelectionForm,
             'guildSelectionForm' => $guildSelectionForm,
             'selectedBotInstance' => $selectedBotInstance,
+            'refreshGuildsForm' => $refreshGuildsForm,
             'error' => $error
         ]));
     }

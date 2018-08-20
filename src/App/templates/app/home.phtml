@@ -27,6 +27,18 @@ if (isset($botSelectionForm)) {
 
     $botSelectionForm->prepare();
 }
+
+/** @var \App\Form\Home\RefreshGuildsForm $refreshGuildsForm */
+$refreshGuildsForm = $this->refreshGuildsForm;
+
+if (isset($refreshGuildsForm)) {
+    $refreshGuildsForm->setAttributes([
+        'action' => $this->url('home'),
+        'method' => 'post'
+    ]);
+
+    $refreshGuildsForm->prepare();
+}
 ?>
 
 <?php if (!empty($this->error)): ?>
@@ -78,6 +90,12 @@ if (isset($botSelectionForm)) {
                 <?= $this->formRow($botSelectionForm->get('login')) ?>
                 <?= $this->formRow($botSelectionForm->get('action')) ?>
                 <?= $this->formRow($botSelectionForm->get('csrf_bot_selection_form')) ?>
+                <?= $this->form()->closeTag() ?>
+
+                <?= $this->form()->openTag($refreshGuildsForm) ?>
+                <?= $this->formRow($refreshGuildsForm->get('refresh')) ?>
+                <?= $this->formRow($refreshGuildsForm->get('action')) ?>
+                <?= $this->formRow($refreshGuildsForm->get('csrf_refresh_guilds_form')) ?>
                 <?= $this->form()->closeTag() ?>
             </div>
         </div>
