@@ -124,7 +124,7 @@ abstract class BaseFormHandler implements MiddlewareInterface
     protected function getCsrfToken($csrfKey = 'csrf')
     {
         if (!$this->session->has($csrfKey))
-            return $this->guard->generateToken();
+            return $this->guard->generateToken($csrfKey);
 
         return $this->session->get($csrfKey);
     }
