@@ -58,7 +58,7 @@ if (isset($guildSelectionForm))
                 <?php if ($this->isLoggedIn): ?>
                     <ul class="navbar-nav ml-auto" id="navbarCollapse">
                         <li class="nav-item">
-                            <?= isset($guildSelectionForm) ? $this->form()->openTag($botSelectionForm) : '' ?>
+                            <?= isset($guildSelectionForm) ? $this->form()->openTag($guildSelectionForm) : '' ?>
                             <div class="input-group mb-3">
                                 <?= isset($guildSelectionForm) ? $this->formRow($guildSelectionForm->get('guildId')) : '' ?>
                             </div>

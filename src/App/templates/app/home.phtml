@@ -51,7 +51,7 @@ if (isset($botSelectionForm)) {
                 <div class="message-body">
                     <p>Selected Bot Instance:</p>
                     <p><?= isset($selectedBotInstance) ? $selectedBotInstance->getAppName() : '' ?></p>
-                    <?= isset($guildSelectionForm) ? $this->form()->openTag($botSelectionForm) : '' ?>
+                    <?= isset($guildSelectionForm) ? $this->form()->openTag($guildSelectionForm) : '' ?>
                     <div class="input-group mb-3">
                         <?= isset($guildSelectionForm) ? $this->formRow($guildSelectionForm->get('guildId')) : '' ?>
                     </div>

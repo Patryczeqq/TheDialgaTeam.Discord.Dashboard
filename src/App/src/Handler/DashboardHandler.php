@@ -23,7 +23,7 @@ class DashboardHandler extends BaseFormHandler
      */
     protected function onProcess(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // Return vars
+        // Global Template Vars
         $isLoggedIn = false;
         $user = null;
         $guildSelectionForm = null;
