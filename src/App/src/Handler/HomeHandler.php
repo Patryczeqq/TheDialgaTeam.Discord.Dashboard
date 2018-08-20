@@ -5,6 +5,7 @@ namespace App\Handler;
 use App\Constant\Session;
 use App\Form\GuildSelectionForm;
 use App\Form\Home\BotSelectionForm;
+use App\Handler\BaseForm\BaseFormHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -33,11 +34,11 @@ class HomeHandler extends BaseFormHandler
 
             try {
                 if (isset($this->post['action']) && $this->post['action'] == 'refresh_discord_client_models') {
-                    $user = $this->getCurrentUser(false);
-                    $guilds = $this->getCurrentUserGuilds(false);
+                    $user = $this->getDiscordClientCurrentUser(false);
+                    $guilds = $this->getDiscordClientCurrentUserGuilds(false);
                 } else {
-                    $user = $this->getCurrentUser();
-                    $guilds = $this->getCurrentUserGuilds();
+                    $user = $this->getDiscordClientCurrentUser();
+                    $guilds = $this->getDiscordClientCurrentUserGuilds();
                 }
             } catch (\Exception $ex) {
                 $this->session->clear();
@@ -47,10 +48,11 @@ class HomeHandler extends BaseFormHandler
             $guildSelectionForm = new GuildSelectionForm($this->guard, $this->session, $guilds);
         }
 
+        $discordAppTables = array();
+
         try {
             $discordAppTables = $this->nancyGateway->getDiscordAppTable();
         } catch (\Exception $ex) {
-            $discordAppTables = array();
             $this->session->clear();
             $error = $ex->getMessage();
         }

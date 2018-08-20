@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Handler;
+namespace App\Handler\BaseForm;
 
 use App\TheDialgaTeam\Discord\NancyGateway;
 use Interop\Container\ContainerInterface;

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Handler;
+namespace App\Handler\BaseForm;
 
 use App\Constant\Error;
 use App\Constant\Session;
+use App\Handler\HomeHandler;
 use App\TheDialgaTeam\Discord\NancyGateway;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
@@ -27,7 +28,7 @@ use Zend\Json\Json;
 
 /**
  * Class BaseFormHandler
- * @package App\Handler
+ * @package App\Handler\BaseForm
  */
 abstract class BaseFormHandler implements MiddlewareInterface
 {
@@ -117,14 +118,63 @@ abstract class BaseFormHandler implements MiddlewareInterface
     protected abstract function onProcess(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface;
 
     /**
-     * @param string $clientId
+     * @param string $csrfKey
+     * @return string
+     */
+    protected function getCsrfToken($csrfKey = 'csrf')
+    {
+        if (!$this->session->has($csrfKey))
+            return $this->guard->generateToken();
+
+        return $this->session->get($csrfKey);
+    }
+
+    /**
+     * @param Form $form
+     * @throws \Exception
+     */
+    protected function getFormError($form)
+    {
+        $error = array();
+
+        foreach ($form->getMessages() as $key => $value) {
+            foreach ($value as $key2 => $value2) {
+                $error[] = sprintf('%s (%s): %s', $key, $key2, $value2);
+            }
+        }
+
+        throw new \Exception(join(' ', $error));
+    }
+
+    /**
+     * Retrieve a value from the session.
+     * @param string $key
+     * @param bool $throwExceptionIfNotFound
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function getSessionValue($key, $throwExceptionIfNotFound = true)
+    {
+        if (!$this->session->has($key)) {
+            if ($throwExceptionIfNotFound)
+                throw new \Exception(Error::ERROR_INVALID_SESSION);
+            else
+                return null;
+        }
+
+        return $this->session->get($key);
+    }
+
+    /**
      * @return Discord
      * @throws \Exception
      */
-    protected function getDiscordOAuth2($clientId)
+    protected function getDiscordOAuth2()
     {
         if (isset($this->discordOAuth2))
             return $this->discordOAuth2;
+
+        $clientId = $this->getSessionValue(Session::CLIENT_ID);
 
         try {
             $discordAppTables = $this->nancyGateway->getDiscordAppTable($clientId);
@@ -150,17 +200,10 @@ abstract class BaseFormHandler implements MiddlewareInterface
         if (isset($this->discordClient))
             return $this->discordClient;
 
-        if (!$this->session->has(Session::DISCORD_OAUTH2_ACCESS_TOKEN))
-            throw new \Exception(Error::ERROR_INVALID_SESSION);
-
-        $accessToken = new AccessToken($this->session->get(Session::DISCORD_OAUTH2_ACCESS_TOKEN));
+        $accessToken = new AccessToken($this->getSessionValue(Session::DISCORD_OAUTH2_ACCESS_TOKEN));
 
         if ($accessToken->hasExpired()) {
-            if (!$this->session->has(Session::CLIENT_ID))
-                throw new \Exception(Error::ERROR_INVALID_SESSION);
-
-            $clientId = $this->session->get(Session::CLIENT_ID);
-            $discordOAuth2 = $this->getDiscordOAuth2($clientId);
+            $discordOAuth2 = $this->getDiscordOAuth2();
 
             try {
                 $accessToken = $discordOAuth2->getAccessToken('refresh_token', [
@@ -182,40 +225,11 @@ abstract class BaseFormHandler implements MiddlewareInterface
     }
 
     /**
-     * @param string $csrfKey
-     * @return string
-     */
-    protected function getCsrfToken($csrfKey = 'csrf')
-    {
-        if (!$this->session->has($csrfKey))
-            return $this->guard->generateToken();
-
-        return $this->session->get($csrfKey);
-    }
-
-    /**
-     * @param Form $form
-     * @throws \Exception
-     */
-    protected function getFormError($form)
-    {
-        $error = array();
-
-        foreach ($form->getMessages() as $key => $value) {
-            foreach ($value as $key2 => $value2) {
-                $error[] = sprintf('%s: %s', $key2, $value2);
-            }
-        }
-
-        throw new \Exception(join(' ', $error));
-    }
-
-    /**
      * @param bool $getFromCache
      * @return User
      * @throws \Exception
      */
-    protected function getCurrentUser($getFromCache = true)
+    protected function getDiscordClientCurrentUser($getFromCache = true)
     {
         if ($getFromCache && $this->session->has(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER)) {
             $user = new User($this->session->get(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER));
@@ -236,11 +250,11 @@ abstract class BaseFormHandler implements MiddlewareInterface
      * @return array|Guild[]
      * @throws \Exception
      */
-    protected function getCurrentUserGuilds($getFromCache = true)
+    protected function getDiscordClientCurrentUserGuilds($getFromCache = true)
     {
         $guilds = array();
 
-        if ($this->session->has(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER_GUILDS)) {
+        if ($getFromCache && $this->session->has(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER_GUILDS)) {
             $guilds_array = Json::decode($this->session->get(Session::DISCORD_CLIENT_USER_GET_CURRENT_USER_GUILDS), Json::TYPE_ARRAY);
 
             foreach ($guilds_array as $key => $value) {

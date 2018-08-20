@@ -6,7 +6,7 @@ namespace App;
 
 use App\Form\Element\Csrf;
 use App\Form\Element\Text;
-use App\Handler\BaseFormHandlerFactory;
+use App\Handler\BaseForm\BaseFormHandlerFactory;
 use App\Handler\DashboardHandler;
 use App\Handler\DiscordAppAuthenticationHandler;
 use App\Handler\HomeHandler;

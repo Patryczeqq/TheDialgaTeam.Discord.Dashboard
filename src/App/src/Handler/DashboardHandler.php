@@ -6,6 +6,7 @@ use App\Constant\Session;
 use App\Form\Dashboard\CommandPrefixForm;
 use App\Form\Dashboard\NicknameForm;
 use App\Form\GuildSelectionForm;
+use App\Handler\BaseForm\BaseFormHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -34,8 +35,8 @@ class DashboardHandler extends BaseFormHandler
         if ($this->session->has(Session::DISCORD_OAUTH2_ACCESS_TOKEN)) {
             $isLoggedIn = true;
 
-            $guilds = $this->getDiscordClient()->user->getCurrentUserGuilds(array());
-            $user = $this->getDiscordClient()->user->getCurrentUser(array());
+            $user = $this->getDiscordClientCurrentUser();
+            $guilds = $this->getDiscordClientCurrentUserGuilds();
 
             $guildSelectionForm = new GuildSelectionForm($this->guard, $this->session, $guilds);
 
