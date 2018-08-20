@@ -92,6 +92,8 @@ if (isset($refreshGuildsForm)) {
                 <?= $this->formRow($botSelectionForm->get('csrf_bot_selection_form')) ?>
                 <?= $this->form()->closeTag() ?>
 
+                <br/>
+
                 <?= $this->form()->openTag($refreshGuildsForm) ?>
                 <?= $this->formRow($refreshGuildsForm->get('refresh')) ?>
                 <?= $this->formRow($refreshGuildsForm->get('action')) ?>
