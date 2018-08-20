@@ -58,9 +58,13 @@ if (isset($guildSelectionForm))
                 <?php if ($this->isLoggedIn): ?>
                     <ul class="navbar-nav ml-auto" id="navbarCollapse">
                         <li class="nav-item">
+                            <?= isset($guildSelectionForm) ? $this->form()->openTag($botSelectionForm) : '' ?>
                             <div class="input-group mb-3">
                                 <?= isset($guildSelectionForm) ? $this->formRow($guildSelectionForm->get('guildId')) : '' ?>
                             </div>
+                            <?= isset($guildSelectionForm) ? $this->formRow($guildSelectionForm->get('action')) : '' ?>
+                            <?= isset($guildSelectionForm) ? $this->formRow($guildSelectionForm->get('csrf_guild_selection_form')) : '' ?>
+                            <?= isset($guildSelectionForm) ? $this->form()->closeTag() : '' ?>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="<?= $this->url('home') ?>">
