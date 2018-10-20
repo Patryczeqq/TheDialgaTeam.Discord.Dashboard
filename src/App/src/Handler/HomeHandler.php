@@ -59,7 +59,7 @@ class HomeHandler extends BaseFormHandler
         $discordAppTables = array();
 
         try {
-            $discordAppTables = $this->nancyGateway->getDiscordAppTable();
+            $discordAppTables = $this->nancyGateway->baseModule->getDiscordAppTable();
         } catch (\Exception $ex) {
             $this->session->clear();
             $error = $ex->getMessage();

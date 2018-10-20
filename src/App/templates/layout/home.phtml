@@ -1,4 +1,13 @@
 <?php
+$this->doctype(\Zend\View\Helper\Doctype::HTML5);
+
+$this->headMeta()
+    ->setCharset('UTF-8')
+    ->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8')
+    ->appendHttpEquiv('Content-Language', 'en-US')
+    ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+    ->appendName('viewport', 'width=device-width, initial-scale=1, shrink-to-fit=no');
+
 $this->headLink()
     ->prependStylesheet($this->basePath('css/extra.css'))
     ->prependStylesheet('https://use.fontawesome.com/releases/v5.0.6/css/all.css')
@@ -12,13 +21,9 @@ $this->inlineScript()
 /** @var RestCord\Model\User\User $user */
 $user = $this->user;
 ?>
-<!DOCTYPE html>
+<?= $this->doctype() ?>
 <html>
 <head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <link rel="shortcut icon" href="https://framework.zend.com/ico/favicon.ico"/>
     <?= $this->headTitle('The Dialga Team\'s bot')->setSeparator(' - ')->setAutoEscape(false) ?>
     <?= $this->headMeta() ?>
     <?= $this->headLink() ?>
